@@ -9,6 +9,12 @@ fi
 
 source "$CONFIG"
 
+if ! command -v certbot &> /dev/null; then
+    echo "❌ Certbot kurulu değil. Kurmak için:"
+    echo "   sudo apt install certbot"
+    exit 1
+fi
+
 show_menu() {
     echo ""
     echo "🔧 Web Sitesi Yönetim Paneli"
