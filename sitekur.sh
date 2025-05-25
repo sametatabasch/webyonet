@@ -90,9 +90,9 @@ read -p "📦 WordPress kurulumu yapılsın mı? (e/h): " INSTALL_WP
 
 if [[ "$INSTALL_WP" == "e" || "$INSTALL_WP" == "E" ]]; then
     echo "📥 WordPress indiriliyor..."
-    wget -q https://wordpress.org/latest.tar.gz -O /tmp/latest.tar.gz
-    tar -xzf /tmp/latest.tar.gz -C /tmp/
-    cp -r /tmp/wordpress/* "$WEB_DIR/"
+    wget -q https://tr.wordpress.org/latest-tr_TR.zip -O /tmp/wordpress.zip
+    unzip -q /tmp/wordpress.zip -d /tmp
+    mv /tmp/wordpress/* "$WEB_DIR"
     chown -R $USERNAME:www-data "$WEB_DIR"
     chmod -R 755 "$WEB_DIR"
     echo "✅ WordPress dosyaları yüklendi. Kurulum sihirbazı için şu adresi ziyaret edin:"
