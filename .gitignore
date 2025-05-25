@@ -1,0 +1,5 @@
+*.deb
+*.log
+*.bak
+*.swp
+sitekur-config.sh
