@@ -22,7 +22,7 @@ Version: $VERSION
 Section: admin
 Priority: optional
 Architecture: $ARCH
-Depends: bash, curl, apache2, certbot, jq
+Depends: bash, curl, apache2, certbot, jq, unzip
 Maintainer: $MAINTAINER
 Description: Apache tabanlı web siteleri yönetmek için terminal aracı
  Basit bir arayüz ile Apache VirtualHost oluşturur, WordPress kurar, geçici subdomain atar.
