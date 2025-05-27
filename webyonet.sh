@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONFIG="./sitekur-config.sh"
+CONFIG="/etc/webyonet/sitekur-config.sh"
 
 if [ ! -f "$CONFIG" ]; then
     echo "❌ $CONFIG yapılandırma dosyası bulunamadı!"
