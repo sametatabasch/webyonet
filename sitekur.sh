@@ -30,7 +30,7 @@ chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
 WEB_DIR="/home/$USERNAME/www/$SUBDOMAIN"
 mkdir -p "$WEB_DIR"
 chown -R $USERNAME:www-data "$WEB_DIR"
-chmod -R 755 "$WEB_DIR"
+chmod -R 775 "$WEB_DIR"
 
 # Üst dizinlerde Apache'nin erişebilmesi için +x izni
 chmod +x /home/$USERNAME
@@ -94,7 +94,7 @@ if [[ "$INSTALL_WP" == "e" || "$INSTALL_WP" == "E" ]]; then
     unzip -q /tmp/wordpress.zip -d /tmp
     mv /tmp/wordpress/* "$WEB_DIR"
     chown -R $USERNAME:www-data "$WEB_DIR"
-    chmod -R 755 "$WEB_DIR"
+    chmod -R 775 "$WEB_DIR"
     echo "✅ WordPress dosyaları yüklendi. Kurulum sihirbazı için şu adresi ziyaret edin:"
     echo "👉 http://$SUBDOMAIN"
 else
