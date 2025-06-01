@@ -19,8 +19,18 @@ BACKUP_DIR="$BASE_BACKUP_DIR/$DIR_NAME"
 # Log file path
 LOG_FILE="$BASE_BACKUP_DIR/backup-$DATE_MONTH.log"
 
-# Yandex.Disk Token (set your own here)
-TOKEN=""
+# Yandex.Disk Token (set your own in webyonet-config.sh)
+CONFIG="/etc/webyonet/webyonet-config.sh"
+
+if [ ! -f "$CONFIG" ]; then
+    echo "❌ $CONFIG yapılandırma dosyası bulunamadı!"
+    exit 1
+fi
+source "$CONFIG"
+if [ -z "$YANDEX_TOKEN" ]; then
+    echo "❌ Yandex.Disk token bulunamadı. Lütfen webyonet-config.sh dosyasını düzenleyin."
+    exit 1
+fi
 
 function logger()
 {
@@ -51,7 +61,7 @@ function createDir()
 {
     local json_out
     local json_error
-    json_out=`curl -s -X PUT -H "Authorization: OAuth $TOKEN" https://cloud-api.yandex.net/v1/disk/resources?path=/$DIR_NAME`
+    json_out=`curl -s -X PUT -H "Authorization: OAuth $YANDEX_TOKEN" https://cloud-api.yandex.net/v1/disk/resources?path=/$DIR_NAME`
     json_error=$(checkError "$json_out")
     if [[ $json_error != '' ]]; then
         if [[ $json_error == 'DiskPathPointsToExistentDirectoryError' ]]; then
@@ -71,7 +81,7 @@ function getUploadUrl()
     local json_out
     local json_error
     local output
-    json_out=`curl -s --header "Authorization: OAuth $TOKEN" https://cloud-api.yandex.net/v1/disk/resources/upload?path=/$DIR_NAME/$1`
+    json_out=`curl -s --header "Authorization: OAuth $YANDEX_TOKEN" https://cloud-api.yandex.net/v1/disk/resources/upload?path=/$DIR_NAME/$1`
     json_error=$(checkError "$json_out")
     if [[ $json_error != '' ]]; then
         logger "URL for '$1' not created. Error: $json_error"
@@ -92,7 +102,7 @@ function uploadFile()
     upload_url=$(getUploadUrl "$2")
     if [[ $upload_url != '' ]]
     then
-        json_out=`curl -s -F "file=@$1/$2" --header "Authorization: OAuth $TOKEN" $upload_url`
+        json_out=`curl -s -F "file=@$1/$2" --header "Authorization: OAuth $YANDEX_TOKEN" $upload_url`
         json_error=$(checkError "$json_out")
         if [[ $json_error != '' ]]
         then
