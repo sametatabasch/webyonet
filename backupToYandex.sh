@@ -104,10 +104,8 @@ function uploadFile()
     then
         if command -v pv >/dev/null 2>&1; then
             FILESIZE=$(stat -c%s "$1/$2")
-            curl -s --header "Authorization: OAuth $YANDEX_TOKEN" \
-                -T <(pv -n "$1/$2") \
-                --progress-bar \
-                "$upload_url"
+            pv "$1/$2" | curl --header "Authorization: OAuth $YANDEX_TOKEN" \
+                -T - "$upload_url"
             echoLogger "Yükleme tamamlandı: $2"
         else
             echoLogger "pv aracı bulunamadı, yüzde gösterilemiyor. Normal yükleme başlatılıyor."
