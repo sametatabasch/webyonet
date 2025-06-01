@@ -12,7 +12,7 @@ echo "📦 Debian paketi hazırlanıyor..."
 BUILD_DIR="$PWD/${APP_NAME}_build"
 rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR/DEBIAN"
-mkdir -p "$BUILD_DIR/usr/local/bin/$APP_NAME"
+mkdir -p "$BUILD_DIR/usr/local/bin/$APP_NAME-bin"
 mkdir -p "$BUILD_DIR/etc/$APP_NAME"
 
 # === KONTROL DOSYASI ===
@@ -29,14 +29,14 @@ Description: Apache tabanlı web siteleri yönetmek için terminal aracı
 EOF
 
 # === ANA ÇALIŞTIRICI (webyonet komutu) ===
-cat <<'EOF' > "$BUILD_DIR/usr/local/bin/webyonet/webyonet"
+cat <<'EOF' > "$BUILD_DIR/usr/local/bin/webyonet"
 #!/bin/bash
 # /usr/local/bin/webyonet
 
-if [ -f /usr/local/bin/webyonet/webyonet_menu.sh ]; then
-  bash /usr/local/bin/webyonet/webyonet_menu.sh
+if [ -f /usr/local/bin/webyonet-bin/webyonet_menu.sh ]; then
+  bash /usr/local/bin/webyonet-bin/webyonet_menu.sh
 else
-  echo "❌ /usr/local/bin/webyonet/webyonet_menu.sh bulunamadı."
+  echo "❌ /usr/local/bin/webyonet-bin/webyonet_menu.sh bulunamadı."
   exit 1
 fi
 EOF
@@ -51,10 +51,10 @@ for FILE in "${REQUIRED_FILES[@]}"; do
     echo "❌ $FILE bulunamadı. Aynı klasörde olmalı."
     exit 1
   fi
-  cp "$FILE" "$BUILD_DIR/usr/local/bin/$APP_NAME/"
+  cp "$FILE" "$BUILD_DIR/usr/local/bin/$APP_NAME-bin/"
 done
 
-chmod +x "$BUILD_DIR/usr/local/bin/$APP_NAME/"*.sh
+chmod +x "$BUILD_DIR/usr/local/bin/$APP_NAME-bin/"*.sh
 
 # === config dosyasını /etc/webyonet/webonyet-config.sh adresine kaydet ===
 if [ ! -f "webyonet-config.sh" ]; then
