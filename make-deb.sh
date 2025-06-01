@@ -56,12 +56,12 @@ done
 
 chmod +x "$BUILD_DIR/usr/local/bin/$APP_NAME-bin/"*.sh
 
-# === config dosyasını /etc/webyonet/webonyet-config.sh adresine kaydet ===
+# === config dosyasını /etc/webyonet/webyonet-config.sh adresine kaydet ===
 if [ ! -f "webyonet-config.sh" ]; then
   echo "❌ webyonet-config.sh bulunamadı."
   exit 1
 fi
-cp "webyonet-config.sh" "$BUILD_DIR/etc/$APP_NAME/webonyet-config.sh"
+cp "webyonet-config.sh" "$BUILD_DIR/etc/$APP_NAME/webyonet-config.sh"
 
 # === DEB OLUŞTUR ===
 dpkg-deb --build "$BUILD_DIR" > /dev/null
