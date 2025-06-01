@@ -138,8 +138,8 @@ arr=`ls /home | grep -v back`
 for a in $arr
 do
         echoLogger "$a dizini sıkıştırılıyor."
-        BACKUP_FILE_NAME="$a.tar.xz"
-        tar -cJf $BACKUP_DIR/$BACKUP_FILE_NAME /home/$a
+        BACKUP_FILE_NAME="$a.tar.gz"
+        tar -czf $BACKUP_DIR/$BACKUP_FILE_NAME /home/$a
         echoLogger "$a sıkıştırıldı"
         if [[ $dirOK == 'OK' ]]; then
                 echoLogger "Uploading $BACKUP_FILE_NAME to Yandex.Disk"
