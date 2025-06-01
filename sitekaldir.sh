@@ -1,7 +1,7 @@
 #!/bin/bash
 
 read -p "Kullanıcı adı: " username
-read -p "Silinecek domain (örn: figurdukkani.com): " domain
+read -p "Silinecek domain (örn: gencbilisim.net): " domain
 
 basedir="/home/$username/www"
 sitedir="$basedir/$domain"
