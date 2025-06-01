@@ -46,7 +46,7 @@ do
     tar -czf "$BACKUP_DIR/$BACKUP_FILE_NAME" "/home/$a"
     echoLogger "$a sıkıştırıldı"
     echoLogger "Uploading $BACKUP_FILE_NAME to Yandex.Disk"
-    rclone copy "$BACKUP_DIR/$BACKUP_FILE_NAME" "$YANDEX_REMOTE:$DIR_NAME/" --progress
+    rclone copy "$BACKUP_DIR/$BACKUP_FILE_NAME" "$YANDEX_REMOTE:$DIR_NAME/" --progress --transfers=4
     if [[ $? -eq 0 ]]; then
         echoLogger "File '$BACKUP_FILE_NAME' uploaded to Yandex.Disk (rclone)"
         rm -f "$BACKUP_DIR/$BACKUP_FILE_NAME"
