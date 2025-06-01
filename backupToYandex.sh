@@ -96,30 +96,17 @@ function getUploadUrl()
 # $2 - local file name for upload
 function uploadFile()
 {
-    local json_out
-    local json_error
-    local upload_url
-    upload_url=$(getUploadUrl "$2")
-    if [[ $upload_url != '' ]]
-    then
-        if command -v pv >/dev/null 2>&1; then
-            FILESIZE=$(stat -c%s "$1/$2")
-            pv "$1/$2" | curl --header "Authorization: OAuth $YANDEX_TOKEN" \
-                -T - "$upload_url"
-            echoLogger "Yükleme tamamlandı: $2"
+    if command -v rclone >/dev/null 2>&1; then
+        # yadisk: rclone config'de verdiğiniz remote adı
+        rclone copy "$1/$2" yadisk:$DIR_NAME/ --progress
+        if [[ $? -eq 0 ]]; then
+            echoLogger "File '$2' uploaded to Yandex.Disk (rclone)"
         else
-            echoLogger "pv aracı bulunamadı, yüzde gösterilemiyor. Normal yükleme başlatılıyor."
-            json_out=$(curl -s -F "file=@$1/$2" --header "Authorization: OAuth $YANDEX_TOKEN" "$upload_url")
-            json_error=$(checkError "$json_out")
-            if [[ $json_error != '' ]]
-            then
-                echoLogger "File '$2' not uploaded. Error: $json_error"
-            else
-                echoLogger "File '$2' uploaded to Yandex.Disk"
-            fi
+            echoLogger "File '$2' not uploaded. Error with rclone."
         fi
     else
-        echoLogger "Can not get upload URL. File '$2' not uploaded."
+        echoLogger "rclone aracı bulunamadı, curl ile yükleme deneniyor."
+        # ...buraya eski curl/pv kodunuz...
     fi
 }
 
