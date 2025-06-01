@@ -102,13 +102,23 @@ function uploadFile()
     upload_url=$(getUploadUrl "$2")
     if [[ $upload_url != '' ]]
     then
-        json_out=`curl -s -F "file=@$1/$2" --header "Authorization: OAuth $YANDEX_TOKEN" $upload_url`
-        json_error=$(checkError "$json_out")
-        if [[ $json_error != '' ]]
-        then
-            echoLogger "File '$2' not uploaded. Error: $json_error"
+        if command -v pv >/dev/null 2>&1; then
+            FILESIZE=$(stat -c%s "$1/$2")
+            curl -s --header "Authorization: OAuth $YANDEX_TOKEN" \
+                -T <(pv -n "$1/$2") \
+                --progress-bar \
+                "$upload_url"
+            echoLogger "Yükleme tamamlandı: $2"
         else
-            echoLogger "File '$2' uploaded to Yandex.Disk"
+            echoLogger "pv aracı bulunamadı, yüzde gösterilemiyor. Normal yükleme başlatılıyor."
+            json_out=$(curl -s -F "file=@$1/$2" --header "Authorization: OAuth $YANDEX_TOKEN" "$upload_url")
+            json_error=$(checkError "$json_out")
+            if [[ $json_error != '' ]]
+            then
+                echoLogger "File '$2' not uploaded. Error: $json_error"
+            else
+                echoLogger "File '$2' uploaded to Yandex.Disk"
+            fi
         fi
     else
         echoLogger "Can not get upload URL. File '$2' not uploaded."
@@ -145,6 +155,7 @@ do
                 echoLogger "Uploading $BACKUP_FILE_NAME to Yandex.Disk"
                 uploadFile "$BACKUP_DIR" "$BACKUP_FILE_NAME"
                 rm -f "$BACKUP_DIR/$a.tar.gz" # remove local copy after upload
+                echoLogger "$BACKUP_FILE_NAME silindi."
         fi
 done
 echoLogger "Removing backup dir $BACKUP_DIR"
