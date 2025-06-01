@@ -27,7 +27,7 @@ chmod 600 /home/$USERNAME/.ssh/authorized_keys
 chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
 
 # Web dizinini oluştur
-WEB_DIR="/home/$USERNAME/www/$SUBDOMAIN"
+WEB_DIR="/home/$USERNAME/www/$SUBDOMAIN/public_html"
 mkdir -p "$WEB_DIR"
 chown -R $USERNAME:www-data "$WEB_DIR"
 chmod -R 775 "$WEB_DIR"

@@ -29,8 +29,8 @@ read -p "Kullanıcı adı: " USERNAME
     cat <<EOF > "$VHOST_FILE"
 <VirtualHost *:80>
     ServerName $NEW_DOMAIN
-    DocumentRoot $NEW_DIR
-    <Directory $NEW_DIR>
+    DocumentRoot $NEW_DIR/public_html
+    <Directory $NEW_DIR/public_html>
         AllowOverride All
         Require all granted
     </Directory>
