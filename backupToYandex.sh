@@ -144,6 +144,7 @@ do
         if [[ $dirOK == 'OK' ]]; then
                 echoLogger "Uploading $BACKUP_FILE_NAME to Yandex.Disk"
                 uploadFile "$BACKUP_DIR" "$BACKUP_FILE_NAME"
+                rm -f "$BACKUP_DIR/$a.tar.gz" # remove local copy after upload
         fi
 done
 echoLogger "Removing backup dir $BACKUP_DIR"
