@@ -29,7 +29,7 @@ Description: Apache tabanlı web siteleri yönetmek için terminal aracı
 EOF
 
 # === ANA ÇALIŞTIRICI (webyonet komutu) ===
-cat <<'EOF' > "$BUILD_DIR/usr/local/bin/webyonet"
+cat <<'EOF' > "$BUILD_DIR/usr/local/bin/webyonet/webyonet"
 #!/bin/bash
 # /usr/local/bin/webyonet
 
