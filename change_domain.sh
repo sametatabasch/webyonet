@@ -1,35 +1,10 @@
 #!/bin/bash
-
-CONFIG="/etc/webyonet/sitekur-config.sh"
-
-if [ ! -f "$CONFIG" ]; then
-    echo "❌ $CONFIG yapılandırma dosyası bulunamadı!"
-    exit 1
-fi
-
-source "$CONFIG"
-
-if ! command -v certbot &> /dev/null; then
-    echo "❌ Certbot kurulu değil. Kurmak için:"
-    echo "   sudo apt install certbot"
-    exit 1
-fi
-
-show_menu() {
-    echo ""
-    echo "🔧 Web Sitesi Yönetim Paneli"
-    echo "1) Yeni site oluştur"
-    echo "2) Geçici subdomain’i gerçek domain ile değiştir"
-    echo "3) Siteyi sil"
-    echo "4) Çıkış"
-}
-
-create_site() {
-    bash ./sitekur.sh
-}
-
-change_domain() {
-    read -p "Kullanıcı adı: " USERNAME
+# Geçici subdomain'i gerçek domain ile değiştirme scripti
+# Bu script, Apache üzerinde geçici bir subdomain'i gerçek bir domain ile değiştirir.
+# Gereksinimler:
+# - Apache web sunucusu
+# - Certbot (HTTPS için)
+read -p "Kullanıcı adı: " USERNAME
     read -p "Eski (geçici) domain adı: " OLD_DOMAIN
     read -p "Yeni domain adı (gerçek domain): " NEW_DOMAIN
 
@@ -72,21 +47,3 @@ EOF
 
     echo "🎯 HTTPS kurmak için:"
     echo "  sudo certbot --apache -d $NEW_DOMAIN"
-}
-
-delete_site() {
-    bash ./sitekaldir.sh
-}
-
-# Ana döngü
-while true; do
-    show_menu
-    read -p "Seçiminiz [1-4]: " CHOICE
-    case $CHOICE in
-        1) create_site ;;
-        2) change_domain ;;
-        3) delete_site ;;
-        4) echo "👋 Görüşmek üzere."; break ;;
-        *) echo "Geçersiz seçim!" ;;
-    esac
-done
