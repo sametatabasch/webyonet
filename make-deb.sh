@@ -2,7 +2,7 @@
 
 # === AYARLAR ===
 APP_NAME="webyonet"
-VERSION="1.1"
+VERSION="1.2"
 ARCH="all"
 MAINTAINER="Samet ATABAŞ <admin@gencbilisim.net>"
 
@@ -29,22 +29,16 @@ Description: Apache tabanlı web siteleri yönetmek için terminal aracı
 EOF
 
 # === ANA ÇALIŞTIRICI (webyonet komutu) ===
-cat <<'EOF' > "$BUILD_DIR/usr/local/bin/webyonet"
-#!/bin/bash
-# /usr/local/bin/webyonet
-
-if [ -f /usr/local/bin/webyonet-bin/webyonet_menu.sh ]; then
-  bash /usr/local/bin/webyonet-bin/webyonet_menu.sh
-else
-  echo "❌ /usr/local/bin/webyonet-bin/webyonet_menu.sh bulunamadı."
+cp ./webyonet "$BUILD_DIR/usr/local/bin/webyonet"
+if [ ! -f "$BUILD_DIR/usr/local/bin/webyonet" ]; then
+  echo "❌ webyonet dosyası bulunamadı."
   exit 1
 fi
-EOF
 
 chmod +x "$BUILD_DIR/usr/local/bin/webyonet"
 
 # === WEBYONET DOSYALARINI KOPYALA ===
-REQUIRED_FILES=("sitekur.sh" "sitekaldir.sh" "sitekur-config.sh" "webyonet_menu.sh" "change_domain.sh")
+REQUIRED_FILES=("sitekur.sh" "sitekaldir.sh" "sitekur-config.sh" "webyonet_menu.sh" "change_domain.sh" "backupToYandex.sh")
 
 for FILE in "${REQUIRED_FILES[@]}"; do
   if [ ! -f "$FILE" ]; then

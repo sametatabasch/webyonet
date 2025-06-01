@@ -1,0 +1,18 @@
+#!/bin/bash
+# /usr/local/bin/webyonet
+
+if [[ "$1" == "-b" || "$1" == "--backup" ]]; then
+  if [ -f /usr/local/bin/webyonet-bin/backupToYandex.sh ]; then
+    bash /usr/local/bin/webyonet-bin/backupToYandex.sh
+  else
+    echo "❌ /usr/local/bin/webyonet-bin/backupToYandex.sh bulunamadı."
+    exit 1
+  fi
+else
+  if [ -f /usr/local/bin/webyonet-bin/webyonet_menu.sh ]; then
+    bash /usr/local/bin/webyonet-bin/webyonet_menu.sh
+  else
+    echo "❌ /usr/local/bin/webyonet-bin/webyonet_menu.sh bulunamadı."
+    exit 1
+  fi
+fi
