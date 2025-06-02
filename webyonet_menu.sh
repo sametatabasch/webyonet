@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CONFIG="/etc/webyonet/webyonet-config.sh"
-APPDIR="/usr/local/bin/webyonet/"
+APPDIR="/usr/local/bin/webyonet"
 
 if [ ! -f "$CONFIG" ]; then
     echo "❌ $CONFIG yapılandırma dosyası bulunamadı!"
