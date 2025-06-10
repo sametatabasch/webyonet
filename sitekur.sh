@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Yapılandırma dosyasını yükle
-source ./sitekur-config.sh
 
 # Kullanıcıdan domain ve kullanıcı adı alınır
 read -p "Site için domain adı girin (örn: gencbilisim.net): " DOMAIN

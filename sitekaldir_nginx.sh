@@ -7,8 +7,6 @@ basedir="/home/$username/www"
 sitedir="$basedir/$domain"
 nginx_conf="/etc/nginx/sites-available/$domain"
 
-# API bilgilerini sitekur-config.sh dosyasından al
-source sitekur-config.sh
 
 # Domain alt alan adı mıydı?
 cloudflare_name="$domain"
