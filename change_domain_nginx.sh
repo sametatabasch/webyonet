@@ -33,6 +33,8 @@ server {
 
     index index.php index.html index.htm;
 
+    client_max_body_size 10M;
+
     access_log /var/log/nginx/${NEW_DOMAIN}-access.log;
     error_log /var/log/nginx/${NEW_DOMAIN}-error.log;
 
@@ -42,12 +44,19 @@ server {
 
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
     }
 
     location ~ /\.ht {
         deny all;
     }
+    
+    # Güvenlik başlıkları
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "geolocation=(), microphone=()" always;
 }
 EOF
 
