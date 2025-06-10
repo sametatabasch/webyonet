@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CONFIG="/etc/webyonet/webyonet-config.sh"
-APPDIR="/usr/local/bin/webyonet"
+APPDIR="/usr/local/bin/webyonet-bin"
 
 if [ ! -f "$CONFIG" ]; then
     echo "❌ $CONFIG yapılandırma dosyası bulunamadı!"
@@ -9,6 +9,12 @@ if [ ! -f "$CONFIG" ]; then
 fi
 
 source "$CONFIG"
+
+if [ -z "$WEB_SERVER" ]; then
+    echo "❌ WEB_SERVER değişkeni config dosyasında tanımlı değil!"
+    echo "Örnek: WEB_SERVER=\"apache\" veya WEB_SERVER=\"nginx\""
+    exit 1
+fi
 
 if ! command -v certbot &> /dev/null; then
     echo "❌ Certbot kurulu değil. Kurmak için:"
@@ -26,15 +32,27 @@ show_menu() {
 }
 
 create_site() {
-    bash $APPDIR/sitekur.sh
+    if [ "$WEB_SERVER" = "nginx" ]; then
+        bash $APPDIR/sitekur_nginx.sh
+    else
+        bash $APPDIR/sitekur.sh
+    fi
 }
 
 change_domain() {
-    bash $APPDIR/change_domain.sh
+    if [ "$WEB_SERVER" = "nginx" ]; then
+        bash $APPDIR/change_domain_nginx.sh
+    else
+        bash $APPDIR/change_domain.sh
+    fi
 }
 
 delete_site() {
-    bash $APPDIR/sitekaldir.sh
+    if [ "$WEB_SERVER" = "nginx" ]; then
+        bash $APPDIR/sitekaldir_nginx.sh
+    else
+        bash $APPDIR/sitekaldir.sh
+    fi
 }
 
 # Ana döngü
