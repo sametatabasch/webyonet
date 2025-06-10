@@ -28,6 +28,9 @@ Description: Apache tabanlı web siteleri yönetmek için terminal aracı
  Basit bir arayüz ile Apache VirtualHost oluşturur, WordPress kurar, geçici subdomain atar.
 EOF
 
+# === CONFFILES DOSYASI OLUŞTUR ===
+echo "/etc/$APP_NAME/webyonet-config.sh" > "$BUILD_DIR/DEBIAN/conffiles"
+
 # === ANA ÇALIŞTIRICI (webyonet komutu) ===
 cp ./webyonet "$BUILD_DIR/usr/local/bin/webyonet"
 if [ ! -f "$BUILD_DIR/usr/local/bin/webyonet" ]; then
@@ -38,7 +41,7 @@ fi
 chmod +x "$BUILD_DIR/usr/local/bin/webyonet"
 
 # === WEBYONET DOSYALARINI KOPYALA ===
-REQUIRED_FILES=("sitekur.sh" "sitekaldir.sh" "webyonet-config.sh" "webyonet_menu.sh" "change_domain.sh" "backupToYandex.sh")
+REQUIRED_FILES=("sitekur.sh" "sitekaldir.sh" "webyonet-config.sh" "webyonet_menu.sh" "change_domain.sh" "backupToYandex.sh" "sitekur_nginx.sh" "sitekaldir_nginx.sh" "change_domain_nginx.sh")
 
 for FILE in "${REQUIRED_FILES[@]}"; do
   if [ ! -f "$FILE" ]; then
