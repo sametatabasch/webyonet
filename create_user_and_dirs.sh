@@ -1,9 +1,4 @@
 #!/bin/bash
-# Değişkenlerin sonraki scriptlerde kullanılabilmesi için export ediliyor
-export DOMAIN
-export USERNAME
-export SUBDOMAIN
-export WEB_DIR
 # Kullanıcıdan domain ve kullanıcı adı alınır
 read -p "Site için domain adı girin (örn: gencbilisim.net): " DOMAIN
 read -p "Yeni sistem kullanıcı adı girin: " USERNAME
@@ -36,3 +31,9 @@ chmod -R 775 "$WEB_DIR"
 # Üst dizinlerde WEb server'in erişebilmesi için +x izni
 chmod +x /home/$USERNAME
 chmod +x /home/$USERNAME/www
+
+# Değişkenlerin sonraki scriptlerde kullanılabilmesi için export ediliyor
+export DOMAIN
+export USERNAME
+export SUBDOMAIN
+export WEB_DIR
