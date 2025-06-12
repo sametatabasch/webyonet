@@ -1,11 +1,17 @@
 #!/bin/bash
+if [ ! -f "$CONFIG" ]; then
+    echo "❌ $CONFIG yapılandırma dosyası bulunamadı!"
+    exit 1
+fi
+
+source "$CONFIG"
 
 read -p "Kullanıcı adı: " username
 read -p "Silinecek domain (örn: gencbilisim.net): " domain
 
 basedir="/home/$username/www"
 sitedir="$basedir/$domain"
-nginx_conf="/etc/nginx/sites-available/$domain"
+nginx_conf="/etc/nginx/sites-available/$domain.conf"
 
 
 # Domain alt alan adı mıydı?
@@ -14,7 +20,7 @@ cloudflare_name="$domain"
 # Nginx site kaldır
 if [ -f "$nginx_conf" ]; then
     echo "[✓] Nginx yapılandırması kaldırılıyor..."
-    rm -f "/etc/nginx/sites-enabled/$domain"
+    rm -f "/etc/nginx/sites-enabled/$domain.conf"
     rm -f "$nginx_conf"
     systemctl reload nginx
 else
