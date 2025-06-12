@@ -41,7 +41,7 @@ create_site() {
         echo "❌ Desteklenmeyen web sunucusu: $WEB_SERVER"
         exit 1
     fi
-    ba sh $APPDIR/last_step.sh
+    ba sh $APPDIR/last_steps.sh
 }
 
 change_domain() {
