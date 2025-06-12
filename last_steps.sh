@@ -1,4 +1,12 @@
 #!/bin/bash
+# Son adımlar: DNS kaydı oluşturma, HTTPS sertifikası alma ve WordPress kurulumu
+[ -f /tmp/webyonet_env ] && source /tmp/webyonet_env # Geçici ortam değişkenlerini yükle
+if [ ! -f "$CONFIG" ]; then
+    echo "❌ $CONFIG yapılandırma dosyası bulunamadı!"
+    exit 1
+fi
+
+source "$CONFIG"
 
 # Eğer geçici subdomain kullanılıyorsa, Cloudflare DNS kaydı oluştur
 if [[ "$SUBDOMAIN" != "$DOMAIN" ]]; then

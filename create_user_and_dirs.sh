@@ -1,4 +1,10 @@
 #!/bin/bash
+if [ ! -f "$CONFIG" ]; then
+    echo "❌ $CONFIG yapılandırma dosyası bulunamadı!"
+    exit 1
+fi
+
+source "$CONFIG"
 # Kullanıcıdan domain ve kullanıcı adı alınır
 read -p "Site için domain adı girin (örn: gencbilisim.net): " DOMAIN
 read -p "Yeni sistem kullanıcı adı girin: " USERNAME
@@ -32,8 +38,8 @@ chmod -R 775 "$WEB_DIR"
 chmod +x /home/$USERNAME
 chmod +x /home/$USERNAME/www
 
-# Değişkenlerin sonraki scriptlerde kullanılabilmesi için export ediliyor
-export DOMAIN
-export USERNAME
-export SUBDOMAIN
-export WEB_DIR
+# Çıktıları /tmp/webyonet_env dosyasına yaz
+echo "DOMAIN=\"$DOMAIN\"" > /tmp/webyonet_env
+echo "USERNAME=\"$USERNAME\"" >> /tmp/webyonet_env
+echo "SUBDOMAIN=\"$SUBDOMAIN\"" >> /tmp/webyonet_env
+echo "WEB_DIR=\"$WEB_DIR\"" >> /tmp/webyonet_env

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[ -f /tmp/webyonet_env ] && source /tmp/webyonet_env # Geçici ortam değişkenlerini yükle
+
 # Gerekli değişkenler önceden tanımlı olmalı: $SUBDOMAIN, $WEB_DIR, $DOMAIN, $SERVER_IP, $CLOUDFLARE_ZONE_ID, $CLOUDFLARE_API_TOKEN, $USERNAME
 
 NGINX_CONF_TEMPLATE="/usr/local/bin/webyonet-bin/nginx_site.conf"
