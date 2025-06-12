@@ -32,11 +32,16 @@ show_menu() {
 }
 
 create_site() {
+    bash $APPDIR/create_user_and_dirs.sh
     if [ "$WEB_SERVER" = "nginx" ]; then
-        bash $APPDIR/sitekur_nginx.sh
+        bash $APPDIR/set_nginx_conf.sh
+    elif [ "$WEB_SERVER" = "apache" ]; then
+        bash $APPDIR/set_apache_conf.sh
     else
-        bash $APPDIR/sitekur.sh
+        echo "❌ Desteklenmeyen web sunucusu: $WEB_SERVER"
+        exit 1
     fi
+    ba sh $APPDIR/last_step.sh
 }
 
 change_domain() {
