@@ -41,7 +41,7 @@ fi
 chmod +x "$BUILD_DIR/usr/local/bin/webyonet"
 
 # === WEBYONET DOSYALARINI KOPYALA ===
-REQUIRED_FILES=("sitekaldir.sh" "webyonet-config.sh" "webyonet_menu.sh" "change_domain.sh" "backupToYandex.sh" "sitekaldir_nginx.sh" "change_domain_nginx.sh" "create_user_and_dirs.sh" "set_nginx_conf.sh" "set_apache_conf.sh" "last_step.sh" "nginx_site.conf" )
+REQUIRED_FILES=("sitekaldir.sh" "webyonet-config.sh" "webyonet_menu.sh" "change_domain.sh" "backupToYandex.sh" "sitekaldir_nginx.sh" "change_domain_nginx.sh" "create_user_and_dirs.sh" "set_nginx_conf.sh" "set_apache_conf.sh" "last_steps.sh" "nginx_site.conf" )
 
 for FILE in "${REQUIRED_FILES[@]}"; do
   if [ ! -f "$FILE" ]; then
