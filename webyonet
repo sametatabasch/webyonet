@@ -1,6 +1,12 @@
 #!/bin/bash
 # /usr/local/bin/webyonet
 
+if [ "$EUID" -ne 0 ]; then
+  echo "❌ Bu programı çalıştırmak için root (sudo) yetkisine sahip olmalısınız."
+  exit 1
+fi
+
+
 if [[ "$1" == "-b" || "$1" == "--backup" ]]; then
   if [ -f /usr/local/bin/webyonet-bin/backupToYandex.sh ]; then
     bash /usr/local/bin/webyonet-bin/backupToYandex.sh
