@@ -19,6 +19,3 @@ sed "s/SUBDOMAIN/$SUBDOMAIN/g; s/WEB_DIR/$(echo $WEB_DIR | sed 's_/_\\/_g')/g" "
 ln -sf "$VHOST_FILE" "/etc/nginx/sites-enabled/$SUBDOMAIN.conf"
 nginx -t && systemctl reload nginx
 echo "✅ Nginx yapılandırması başarıyla ayarlandı: $VHOST_FILE"
-echo "   Site dizini: $WEB_DIR"
-echo "   Domain: $DOMAIN"
-echo "   Subdomain: $SUBDOMAIN"
