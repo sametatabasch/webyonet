@@ -6,7 +6,6 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-
 if [[ "$1" == "-b" || "$1" == "--backup" ]]; then
   if [ -f /usr/local/bin/webyonet-bin/backupToYandex.sh ]; then
     bash /usr/local/bin/webyonet-bin/backupToYandex.sh

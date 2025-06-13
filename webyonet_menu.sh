@@ -53,11 +53,7 @@ change_domain() {
 }
 
 delete_site() {
-    if [ "$WEB_SERVER" = "nginx" ]; then
-        bash $APPDIR/sitekaldir_nginx.sh
-    else
-        bash $APPDIR/sitekaldir.sh
-    fi
+    bash $APPDIR/sitekaldir.sh
 }
 
 # Ana döngü

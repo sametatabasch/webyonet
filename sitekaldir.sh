@@ -1,25 +1,46 @@
 #!/bin/bash
+if [ ! -f "$CONFIG" ]; then
+    echo "❌ $CONFIG yapılandırma dosyası bulunamadı!"
+    exit 1
+fi
+
+source "$CONFIG"
 
 read -p "Kullanıcı adı: " username
 read -p "Silinecek domain (örn: gencbilisim.net): " domain
 
 basedir="/home/$username/www"
 sitedir="$basedir/$domain"
-apache_conf="/etc/apache2/sites-available/$domain.conf"
 
 
 # Domain alt alan adı mıydı?
 cloudflare_name="$domain"
-
-# Apache site kaldır
-if [ -f "$apache_conf" ]; then
-    echo "[✓] Apache yapılandırması kaldırılıyor..."
-    a2dissite "$domain.conf" >/dev/null 2>&1
-    rm -f "$apache_conf"
-    rm -f "/etc/apache2/sites-enabled/$domain.conf"
-    systemctl reload apache2
+if [ "$WEB_SERVER" = "nginx" ]; then
+    # Nginx site kaldır
+    nginx_conf="/etc/nginx/sites-available/$domain.conf"
+    if [ -f "$nginx_conf" ]; then
+        echo "[✓] Nginx yapılandırması kaldırılıyor..."
+        rm -f "/etc/nginx/sites-enabled/$domain.conf"
+        rm -f "$nginx_conf"
+        systemctl reload nginx
+    else
+        echo "[!] Nginx yapılandırması bulunamadı."
+    fi
+elif [ "$WEB_SERVER" = "apache" ]; then
+    # Apache site kaldır
+    apache_conf="/etc/apache2/sites-available/$domain.conf"
+    if [ -f "$apache_conf" ]; then
+        echo "[✓] Apache yapılandırması kaldırılıyor..."
+        a2dissite "$domain.conf" >/dev/null 2>&1
+        rm -f "$apache_conf"
+        rm -f "/etc/apache2/sites-enabled/$domain.conf"
+        systemctl reload apache2
+    else
+        echo "[!] Apache yapılandırması bulunamadı."
+    fi
 else
-    echo "[!] Apache yapılandırması bulunamadı."
+    echo "❌ Desteklenmeyen web sunucusu: $WEB_SERVER"
+    exit 1
 fi
 
 # Let's Encrypt sertifikasını kaldır
