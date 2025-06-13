@@ -19,14 +19,19 @@ else
     SUBDOMAIN="$DOMAIN"
 fi
 
-# Kullanıcı oluştur (parolasız, sadece SSH key ile)
-useradd -m -s /bin/bash "$USERNAME"
-mkdir -p /home/$USERNAME/.ssh
-chmod 700 /home/$USERNAME/.ssh
-ssh-keygen -q -t rsa -b 2048 -N "" -f /home/$USERNAME/.ssh/id_rsa <<<y 2>/dev/null
-cat /home/$USERNAME/.ssh/id_rsa.pub > /home/$USERNAME/.ssh/authorized_keys
-chmod 600 /home/$USERNAME/.ssh/authorized_keys
-chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+# Kullanıcı zaten var mı kontrol et
+if id "$USERNAME" &>/dev/null; then
+    echo "ℹ️ $USERNAME adlı kullanıcı zaten mevcut, oluşturma adımı atlanıyor."
+else
+    # Kullanıcı oluştur (parolasız, sadece SSH key ile)
+    useradd -m -s /bin/bash "$USERNAME"
+    mkdir -p /home/$USERNAME/.ssh
+    chmod 700 /home/$USERNAME/.ssh
+    ssh-keygen -q -t rsa -b 2048 -N "" -f /home/$USERNAME/.ssh/id_rsa <<<y 2>/dev/null
+    cat /home/$USERNAME/.ssh/id_rsa.pub > /home/$USERNAME/.ssh/authorized_keys
+    chmod 600 /home/$USERNAME/.ssh/authorized_keys
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh
+fi
 
 # Web dizinini oluştur
 WEB_DIR="/home/$USERNAME/www/$SUBDOMAIN/public_html"
