@@ -85,4 +85,6 @@ while true; do
         4) backup_home ;;
         5) backup_db ;;
         6) echo "👋 Görüşmek üzere."; break ;;
-        *) echo "Geçersiz seçim!"
+        *) echo "Geçersiz seçim!" ;;
+    esac
+done
