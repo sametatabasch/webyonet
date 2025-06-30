@@ -26,3 +26,5 @@ else
   else
     echo "❌ /usr/local/bin/webyonet-bin/webyonet_menu.sh bulunamadı."
     exit 1
+  fi
+fi
