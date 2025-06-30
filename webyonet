@@ -13,11 +13,16 @@ if [[ "$1" == "-b" || "$1" == "--backup" ]]; then
     echo "❌ /usr/local/bin/webyonet-bin/backupToYandex.sh bulunamadı."
     exit 1
   fi
+elif [[ "$1" == "-db" || "$1" == "--database-backup" ]]; then
+  if [ -f /usr/local/bin/webyonet-bin/dbBackupToYandex.sh ]; then
+    bash /usr/local/bin/webyonet-bin/dbBackupToYandex.sh
+  else
+    echo "❌ /usr/local/bin/webyonet-bin/dbBackupToYandex.sh bulunamadı."
+    exit 1
+  fi
 else
   if [ -f /usr/local/bin/webyonet-bin/webyonet_menu.sh ]; then
     bash /usr/local/bin/webyonet-bin/webyonet_menu.sh
   else
     echo "❌ /usr/local/bin/webyonet-bin/webyonet_menu.sh bulunamadı."
     exit 1
-  fi
-fi
