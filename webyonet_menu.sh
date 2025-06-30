@@ -28,7 +28,9 @@ show_menu() {
     echo "1) Yeni site oluştur"
     echo "2) Geçici subdomain’i gerçek domain ile değiştir"
     echo "3) Siteyi sil"
-    echo "4) Çıkış"
+    echo "4) Home dizin(leri)ni Yandex.Disk'e yedekle"
+    echo "5) Veritabanlarını Yandex.Disk'e yedekle"
+    echo "6) Çıkış"
 }
 
 create_site() {
@@ -56,15 +58,31 @@ delete_site() {
     bash $APPDIR/sitekaldir.sh
 }
 
+backup_home() {
+    if [ -f $APPDIR/backupToYandex.sh ]; then
+        bash $APPDIR/backupToYandex.sh
+    else
+        echo "❌ $APPDIR/backupToYandex.sh bulunamadı."
+    fi
+}
+
+backup_db() {
+    if [ -f $APPDIR/dbBackupToYandex.sh ]; then
+        bash $APPDIR/dbBackupToYandex.sh
+    else
+        echo "❌ $APPDIR/dbBackupToYandex.sh bulunamadı."
+    fi
+}
+
 # Ana döngü
 while true; do
     show_menu
-    read -p "Seçiminiz [1-4]: " CHOICE
+    read -p "Seçiminiz [1-6]: " CHOICE
     case $CHOICE in
         1) create_site ;;
         2) change_domain ;;
         3) delete_site ;;
-        4) echo "👋 Görüşmek üzere."; break ;;
-        *) echo "Geçersiz seçim!" ;;
-    esac
-done
+        4) backup_home ;;
+        5) backup_db ;;
+        6) echo "👋 Görüşmek üzere."; break ;;
+        *) echo "Geçersiz seçim!"
