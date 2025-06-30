@@ -1,4 +1,15 @@
 #!/bin/bash
+# rclone ve yadisk remote kontrolü
+if ! command -v rclone &>/dev/null; then
+    echo "❌ rclone yüklü değil. Kurmak için: sudo apt install rclone"
+    exit 1
+fi
+
+if ! rclone listremotes | grep -q "^yadisk:"; then
+    echo "❌ rclone config'de 'yadisk' adlı bir remote bulunamadı."
+    echo "Kurmak için: rclone config"
+    exit 1
+fi
 
 # Base folder with backups
 BASE_BACKUP_DIR="$HOME/.backup"

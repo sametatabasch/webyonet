@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# rclone ve yadisk remote kontrolü
+if ! command -v rclone &>/dev/null; then
+    echo "❌ rclone yüklü değil. Kurmak için: sudo apt install rclone"
+    exit 1
+fi
+
+if ! rclone listremotes | grep -q "^yadisk:"; then
+    echo "❌ rclone config'de 'yadisk' adlı bir remote bulunamadı."
+    echo "Kurmak için: rclone config"
+    exit 1
+fi
+
 # save password for db user "backup" in "~/.mylogin.cnf":
 # mysql_config_editor set --login-path=local --host=localhost --user=backup --password
 # permisions for backup user: Select table data, Show databases, Lock tables, Show View
