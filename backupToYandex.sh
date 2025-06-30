@@ -47,15 +47,16 @@ fi
 
 echoLogger 'Starting backup'
 
-# /home dizinindeki kullanıcı klasörlerini bul
-arr=$(ls /home | grep -v back)
+# /home dizinindeki sadece klasörleri bul
+arr=$(find /home -mindepth 1 -maxdepth 1 -type d  ! -name '*.backup' ! -name '*.bck*')
 
 for a in $arr
 do
-    echoLogger "$a dizini sıkıştırılıyor."
-    BACKUP_FILE_NAME="$a.tar.gz"
-    tar -czf "$BACKUP_DIR/$BACKUP_FILE_NAME" "/home/$a"
-    echoLogger "$a sıkıştırıldı"
+    user=$(basename "$a")
+    echoLogger "$user dizini sıkıştırılıyor."
+    BACKUP_FILE_NAME="$user.tar.gz"
+    tar -czf "$BACKUP_DIR/$BACKUP_FILE_NAME" "$a"
+    echoLogger "$user sıkıştırıldı"
     echoLogger "Uploading $BACKUP_FILE_NAME to Yandex.Disk"
     rclone copy "$BACKUP_DIR/$BACKUP_FILE_NAME" "$YANDEX_REMOTE:$DIR_NAME/" --progress --transfers=4
     if [[ $? -eq 0 ]]; then
