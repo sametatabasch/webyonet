@@ -4,7 +4,7 @@ REMOTE="gdrive"  # Yandex Disk veya Google Drive gibi bir remote tanımlayın
 # Örnek: REMOTE="yandex" veya REMOTE="gdrive"
 LOCAL_DIR="/home"
 REMOTE_DIR="HomeBackups"
-LOG_FILE="$HOME/.backup/backup-$(date +%Y-%m).log"
+LOG_FILE="$HOME/.backup/backup-$(date +"%d.%m.%Y").log"
 
 # Kontroller
 if ! command -v rclone &>/dev/null; then
