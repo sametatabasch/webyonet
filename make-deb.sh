@@ -2,7 +2,7 @@
 
 # === AYARLAR ===
 APP_NAME="webyonet"
-VERSION="1.5.1"
+VERSION="1.5.2"
 ARCH="all"
 MAINTAINER="Samet ATABAŞ <admin@gencbilisim.net>"
 

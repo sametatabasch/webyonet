@@ -24,14 +24,19 @@ log() {
 
 log '📦 MySQL veritabanı yedeği başlatılıyor'
 
+# save password for db user "backup" in "~/.mylogin.cnf":
+# mysql_config_editor set --login-path=local --host=localhost --user=backup --password
+# permisions for backup user: Select table data, Show databases, Lock tables, Show View
+
+
 # Veritabanı listesi
-databases=$(mysql --login-path=local -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema|mysql|sys)")
+databases=$(mysql -u backup -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema|mysql|sys)")
 
 for db in $databases
 do
     log "🧩 '$db' dump oluşturuluyor"
     dump_name="$db.sql.gz"
-    mysqldump --login-path=local --force --opt --databases "$db" | gzip > "$BACKUP_DIR/$dump_name"
+    mysqldump -u backup --force --opt --databases "$db" | gzip > "$BACKUP_DIR/$dump_name"
 done
 
 # Buluta gönder (aynı isimli dosya güncellenir)
