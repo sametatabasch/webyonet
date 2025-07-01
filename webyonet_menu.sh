@@ -59,18 +59,18 @@ delete_site() {
 }
 
 backup_home() {
-    if [ -f $APPDIR/backupToYandex.sh ]; then
-        bash $APPDIR/backupToYandex.sh
+    if [ -f $APPDIR/backup.sh ]; then
+        bash $APPDIR/backup.sh
     else
-        echo "❌ $APPDIR/backupToYandex.sh bulunamadı."
+        echo "❌ $APPDIR/backup.sh bulunamadı."
     fi
 }
 
 backup_db() {
-    if [ -f $APPDIR/dbBackupToYandex.sh ]; then
-        bash $APPDIR/dbBackupToYandex.sh
+    if [ -f $APPDIR/dbbackup.sh ]; then
+        bash $APPDIR/dbbackup.sh
     else
-        echo "❌ $APPDIR/dbBackupToYandex.sh bulunamadı."
+        echo "❌ $APPDIR/dbbackup.sh bulunamadı."
     fi
 }
 

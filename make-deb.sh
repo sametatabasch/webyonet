@@ -2,7 +2,7 @@
 
 # === AYARLAR ===
 APP_NAME="webyonet"
-VERSION="1.5.0"
+VERSION="1.5.1"
 ARCH="all"
 MAINTAINER="Samet ATABAŞ <admin@gencbilisim.net>"
 
@@ -41,7 +41,7 @@ fi
 chmod +x "$BUILD_DIR/usr/local/bin/webyonet"
 
 # === WEBYONET DOSYALARINI KOPYALA ===
-REQUIRED_FILES=("sitekaldir.sh" "webyonet-config.sh" "webyonet_menu.sh" "change_domain.sh" "backupToYandex.sh" "dbBackupToYandex.sh" "create_user_and_dirs.sh" "set_nginx_conf.sh" "set_apache_conf.sh" "last_steps.sh" "nginx_site.conf" )
+REQUIRED_FILES=("sitekaldir.sh" "webyonet-config.sh" "webyonet_menu.sh" "change_domain.sh" "backup.sh" "dbbackup.sh" "create_user_and_dirs.sh" "set_nginx_conf.sh" "set_apache_conf.sh" "last_steps.sh" "nginx_site.conf" )
 
 for FILE in "${REQUIRED_FILES[@]}"; do
   if [ ! -f "$FILE" ]; then

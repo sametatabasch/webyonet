@@ -7,17 +7,17 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 if [[ "$1" == "-b" || "$1" == "--backup" ]]; then
-  if [ -f /usr/local/bin/webyonet-bin/backupToYandex.sh ]; then
-    bash /usr/local/bin/webyonet-bin/backupToYandex.sh
+  if [ -f /usr/local/bin/webyonet-bin/backup.sh ]; then
+    bash /usr/local/bin/webyonet-bin/backup.sh
   else
-    echo "❌ /usr/local/bin/webyonet-bin/backupToYandex.sh bulunamadı."
+    echo "❌ /usr/local/bin/webyonet-bin/backup.sh bulunamadı."
     exit 1
   fi
 elif [[ "$1" == "-db" || "$1" == "--database-backup" ]]; then
-  if [ -f /usr/local/bin/webyonet-bin/dbBackupToYandex.sh ]; then
-    bash /usr/local/bin/webyonet-bin/dbBackupToYandex.sh
+  if [ -f /usr/local/bin/webyonet-bin/dbbackup.sh ]; then
+    bash /usr/local/bin/webyonet-bin/dbbackup.sh
   else
-    echo "❌ /usr/local/bin/webyonet-bin/dbBackupToYandex.sh bulunamadı."
+    echo "❌ /usr/local/bin/webyonet-bin/dbbackup.sh bulunamadı."
     exit 1
   fi
 else
