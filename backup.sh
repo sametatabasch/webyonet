@@ -27,14 +27,14 @@ rclone lsjson "$REMOTE:$REMOTE_DIR" > "$DRIVE_LIST"
 find "$LOCAL_DIR" -type f -printf "%P|%s\n" | sort > "$LOCAL_LIST"
 
 # 3. Drive'daki dosyaların yol ve boyutlarını çıkart
-jq -r '.[] | "\(.Path)|\(.Size)"' "$DRIVE_LIST" | sort > "$DRIVE_PATHS"
+jq -r '.[] | select(.IsDir==false) | "\(.Path)|\(.Size)"' "$DRIVE_LIST" | sort > "$DRIVE_PATHS"
 
 log "🚀 Yedekleme işlemi başlatıldı"
 # 4. Sadece Drive'da olup yerelde olmayan dosyaları bul
 comm -23 "$DRIVE_PATHS" "$LOCAL_LIST" > "$DELETE_LIST"
 
 # 5. Bu dosyaları Drive'dan sil
-while read -r filepath; do
+while IFS='|' read -r filepath _; do
     log "❌ Siliniyor: $filepath"
     rclone delete "$REMOTE:$REMOTE_DIR/$filepath"
 done < "$DELETE_LIST"
