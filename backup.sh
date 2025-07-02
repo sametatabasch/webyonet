@@ -64,7 +64,9 @@ cat "$UPLOAD_LIST" | xargs -P 32 -I{} bash -c '
   log_file="$3"
   # Eğer yolun içinde "cache" varsa atla
   if [[ "$relative_path" != *cache* ]] && [ -f "$src" ]; then
-    rclone copyto "$src" "$dst" --log-level=NOTICE --progress >> "$log_file" 2>&1
+    echo "Yükleniyor: $src → $dst"
+    rclone copyto "$src" "$dst" --log-level=NOTICE --progress
+    echo "Yüklendi: $src → $dst" >> "$log_file"
   fi
 ' "$LOCAL_DIR" "$REMOTE" "$REMOTE_DIR" "$LOG_FILE"
 
