@@ -56,8 +56,12 @@ comm -23 "$LOCAL_LIST" "$DRIVE_PATHS" > "$UPLOAD_LIST"
 COUNT=$(wc -l < "$UPLOAD_LIST")
 log "📦 Yüklenecek dosya sayısı: $COUNT"
 
-# Benzersiz klasörleri bul, kök dizini (.) hariç tut, paralel mkdir
-cut -d"|" -f1 "$UPLOAD_LIST" | xargs -I{} dirname "{}" | sort -u | grep -v '^.$' | xargs -P 16 -I{} rclone mkdir "$REMOTE:$REMOTE_DIR/{}"
+# Benzersiz klasörleri bul, kök dizini (.) hariç tut, paralel mkdir ve ekrana yaz
+cut -d"|" -f1 "$UPLOAD_LIST" \
+  | xargs -I{} dirname "{}" \
+  | sort -u \
+  | grep -v '^.$' \
+  | xargs -P 16 -I{} bash -c 'echo "Klasör oluşturuluyor: {}"; rclone mkdir "$0:$1/{}"' "$REMOTE" "$REMOTE_DIR"
 
 # 8. Sadece gerekli dosyaları yükle (paralel ve cache hariç)
 cat "$UPLOAD_LIST" | xargs -P 32 -I{} bash -c '
