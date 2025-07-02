@@ -47,12 +47,12 @@ COUNT=$(wc -l < "$UPLOAD_LIST")
 log "📦 Yüklenecek dosya sayısı: $COUNT"
 
 # 8. Sadece gerekli dosyaları yükle
-cat "$UPLOAD_LIST" | xargs -P 32 -I{} bash -c '
-  relative_path=$(echo "{}" | cut -d"|" -f1)
-  src="$LOCAL_DIR/$relative_path"
-  dst="$REMOTE:$REMOTE_DIR/$relative_path"
-  rclone copyto "$src" "$dst" --log-level=NOTICE --progress >> "$LOG_FILE"
-'
+xargs -P 32 -I{} bash -c '
+  relative_path=$(echo "$1" | cut -d"|" -f1)
+  src="$2/$relative_path"
+  dst="$3:$4/$relative_path"
+  rclone copyto "$src" "$dst" --log-level=NOTICE --progress >> "$5"
+' _ {} "$LOCAL_DIR" "$REMOTE" "$REMOTE_DIR" "$LOG_FILE"
 
 log "✅ İşlem tamamlandı: $COUNT dosya yüklendi"
 
