@@ -20,6 +20,9 @@ log() {
 }
 echo "Geçici dizin: $TMPDIR"
 
+# Hedef klasörü oluştur (eğer yoksa)
+rclone mkdir "$REMOTE:$REMOTE_DIR"
+
 # 1. Google Drive'daki dosyaları lsjson ile al
 log "🔍 Google Drive'daki dosyalar listeleniyor..."
 rclone lsjson -R "$REMOTE:$REMOTE_DIR" > "$DRIVE_LIST"
