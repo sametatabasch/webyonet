@@ -50,7 +50,7 @@ log "📦 Yüklenecek dosya sayısı: $COUNT"
 while IFS='|' read -r relative_path _; do
     src="$LOCAL_DIR/$relative_path"
     dst="$REMOTE:$REMOTE_DIR/$relative_path"
-    rclone copyto "$src" "$dst" --create-empty-src-dirs --log-level=NOTICE >> "$LOG_FILE"
+    rclone copyto "$src" "$dst" --log-level=NOTICE >> "$LOG_FILE"
 done < "$UPLOAD_LIST"
 
 log "✅ İşlem tamamlandı: $COUNT dosya yüklendi"
