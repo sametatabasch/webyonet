@@ -56,16 +56,17 @@ comm -23 "$LOCAL_LIST" "$DRIVE_PATHS" > "$UPLOAD_LIST"
 COUNT=$(wc -l < "$UPLOAD_LIST")
 log "📦 Yüklenecek dosya sayısı: $COUNT"
 
-# 8. Sadece gerekli dosyaları yükle
-xargs -P 32 -I{} bash -c '
-  relative_path=$(echo "$1" | cut -d"|" -f1)
-  src="$2/$relative_path"
-  dst="$3:$4/$relative_path"
+# 8. Sadece gerekli dosyaları yükle (paralel ve cache hariç)
+cat "$UPLOAD_LIST" | xargs -P 32 -I{} bash -c '
+  relative_path=$(echo "{}" | cut -d"|" -f1)
+  src="$0/$relative_path"
+  dst="$1:$2/$relative_path"
+  log_file="$3"
   # Eğer yolun içinde "cache" varsa atla
   if [[ "$relative_path" != *cache* ]] && [ -f "$src" ]; then
-    rclone copyto "$src" "$dst" --log-level=NOTICE --progress >> "$5"
+    rclone copyto "$src" "$dst" --log-level=NOTICE --progress >> "$log_file" 2>&1
   fi
-' _ {} "$LOCAL_DIR" "$REMOTE" "$REMOTE_DIR" "$LOG_FILE"
+' "$LOCAL_DIR" "$REMOTE" "$REMOTE_DIR" "$LOG_FILE"
 
 log "✅ İşlem tamamlandı: $COUNT dosya yüklendi"
 
