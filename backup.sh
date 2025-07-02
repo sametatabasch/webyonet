@@ -58,6 +58,7 @@ log "📦 Yüklenecek dosya sayısı: $COUNT"
 
 # Yüklenecek dosyaların klasörlerini önceden oluştur
 cut -d"|" -f1 "$UPLOAD_LIST" | xargs -I{} dirname "{}" | sort -u | while read -r dir; do
+  log "📂 Klasör oluşturuluyor: $dir"
   [ -n "$dir" ] && rclone mkdir "$REMOTE:$REMOTE_DIR/$dir"
 done
 
