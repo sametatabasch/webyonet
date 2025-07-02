@@ -21,25 +21,30 @@ log() {
 echo "Geçici dizin: $TMPDIR"
 
 # 1. Google Drive'daki dosyaları lsjson ile al
-rclone lsjson "$REMOTE:$REMOTE_DIR" > "$DRIVE_LIST"
+log "🔍 Google Drive'daki dosyalar listeleniyor..."
+rclone lsjson -R "$REMOTE:$REMOTE_DIR" > "$DRIVE_LIST"
 
 # 2. Yerel dosyaları listele ve boyutlarıyla birlikte yaz
+log "📂 Yerel dosyalar listeleniyor..."
 find "$LOCAL_DIR" -type f -printf "%P|%s\n" | sort > "$LOCAL_LIST"
 
 # 3. Drive'daki dosyaların yol ve boyutlarını çıkart
+log "📄 Drive dosyaları işleniyor..."
 jq -r '.[] | select(.IsDir==false) | "\(.Path)|\(.Size)"' "$DRIVE_LIST" | sort > "$DRIVE_PATHS"
 
-log "🚀 Yedekleme işlemi başlatıldı"
 # 4. Sadece Drive'da olup yerelde olmayan dosyaları bul
+log "🔍 Yerelde olmayan Drive dosyaları bulunuyor..."
 comm -23 "$DRIVE_PATHS" "$LOCAL_LIST" > "$DELETE_LIST"
 
 # 5. Bu dosyaları Drive'dan sil
+log "🗑️ Drive'dan silinecek dosyalar hazırlanıyor..."
 while IFS='|' read -r filepath _; do
     log "❌ Siliniyor: $filepath"
     rclone delete "$REMOTE:$REMOTE_DIR/$filepath" --progress
 done < "$DELETE_LIST"
 
 # 6. Sadece localde olup drive'da olmayan veya boyutu farklı olan dosyaları bul
+log "🔍 Yerelde olup Drive'da olmayan veya boyutu farklı olan dosyalar bulunuyor..."
 comm -23 "$LOCAL_LIST" "$DRIVE_PATHS" > "$UPLOAD_LIST"
 
 # 7. Yüklenmesi gereken dosya sayısı
