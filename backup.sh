@@ -33,7 +33,8 @@ rclone delete "$REMOTE:$REMOTE_DIR" --min-age 1m --compare-dest "$LOCAL_DIR" \
 log "📤 Yeni ve güncel dosyalar kopyalanıyor..."
 rclone copy "$LOCAL_DIR" "$REMOTE:$REMOTE_DIR" \
   --transfers=16  --checkers=16  --fast-list  --multi-thread-streams=8  --log-level=INFO \
-  --progress  --delete-during  --drive-chunk-size=64M  --log-file="$LOG_FILE"
+  --progress  --delete-during  --drive-chunk-size=64M  --log-file="$LOG_FILE" \
+  --update --use-server-modtime --create-empty-src-dirs
 
 if [[ $? -eq 0 ]]; then
     log "✅ Sync tamamlandı."
