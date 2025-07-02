@@ -6,7 +6,7 @@ LOCAL_DIR="/home"
 
 LOG_DIR="$HOME/.backup"
 mkdir -p "$LOG_DIR"
-LOG_FILE="$LOG_DIR/home-backup-$(date +%Y-%m).log"
+LOG_FILE="$LOG_DIR/home-backup-$(date +"%d-%m-%Y").log"
 
 TMPDIR=$(mktemp -d)
 DRIVE_LIST="$TMPDIR/drive_files.json"
@@ -55,6 +55,11 @@ comm -23 "$LOCAL_LIST" "$DRIVE_PATHS" > "$UPLOAD_LIST"
 # 7. Yüklenmesi gereken dosya sayısı
 COUNT=$(wc -l < "$UPLOAD_LIST")
 log "📦 Yüklenecek dosya sayısı: $COUNT"
+
+# Yüklenecek dosyaların klasörlerini önceden oluştur
+cut -d"|" -f1 "$UPLOAD_LIST" | xargs -I{} dirname "{}" | sort -u | while read -r dir; do
+  [ -n "$dir" ] && rclone mkdir "$REMOTE:$REMOTE_DIR/$dir"
+done
 
 # 8. Sadece gerekli dosyaları yükle (paralel ve cache hariç)
 cat "$UPLOAD_LIST" | xargs -P 32 -I{} bash -c '
