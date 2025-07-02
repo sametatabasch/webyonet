@@ -1,43 +1,58 @@
 #!/bin/bash
 
-REMOTE="gdrive"  # Yandex Disk veya Google Drive gibi bir remote tanımlayın
-# Örnek: REMOTE="yandex" veya REMOTE="gdrive"
-LOCAL_DIR="/home"
+REMOTE="gdrive"
 REMOTE_DIR="HomeBackups"
-LOG_FILE="$HOME/.backup/backup-$(date +"%d.%m.%Y").log"
+LOCAL_DIR="/home"
 
-# Kontroller
-if ! command -v rclone &>/dev/null; then
-    log "❌ rclone yüklü değil. sudo apt install rclone"
-    exit 1
-fi
+LOG_DIR="$HOME/.backup"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/home-backup-$(date +%Y-%m).log"
 
-if ! rclone listremotes | grep -q "^${REMOTE}:"; then
-    log "❌ Remote '${REMOTE}' tanımlı değil."
-    exit 1
-fi
-
-mkdir -p "$(dirname "$LOG_FILE")"
+TMPDIR=$(mktemp -d)
+DRIVE_LIST="$TMPDIR/drive_files.json"
+LOCAL_LIST="$TMPDIR/local_files.txt"
+DRIVE_PATHS="$TMPDIR/drive_paths.txt"
+UPLOAD_LIST="$TMPDIR/upload.txt"
+DELETE_LIST="$TMPDIR/delete.txt"
 
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
 }
-log "🔄 Sync başlıyor: $LOCAL_DIR → $REMOTE:$REMOTE_DIR"
+echo "Geçici dizin: $TMPDIR"
 
-# 1️⃣ Hedefte olup kaynakta olmayanları sil
-log "🧹 Hedefte fazladan kalan dosyalar siliniyor..."
-rclone delete "$REMOTE:$REMOTE_DIR" --min-age 1m --compare-dest "$LOCAL_DIR" \
-  --log-file "$LOG_FILE" --log-level INFO --progress
+# 1. Google Drive'daki dosyaları lsjson ile al
+rclone lsjson "$REMOTE:$REMOTE_DIR" > "$DRIVE_LIST"
 
-# 2️⃣ Kaynaktan yeni veya değişen dosyaları kopyala (fazla olanı silmeden)
-log "📤 Yeni ve güncel dosyalar kopyalanıyor..."
-rclone copy "$LOCAL_DIR" "$REMOTE:$REMOTE_DIR" \
-  --transfers=16  --checkers=16  --fast-list  --multi-thread-streams=8  --log-level=INFO \
-  --progress  --delete-during  --drive-chunk-size=64M  --log-file="$LOG_FILE" \
-  --update --use-server-modtime --create-empty-src-dirs
+# 2. Yerel dosyaları listele ve boyutlarıyla birlikte yaz
+find "$LOCAL_DIR" -type f -printf "%P|%s\n" | sort > "$LOCAL_LIST"
 
-if [[ $? -eq 0 ]]; then
-    log "✅ Sync tamamlandı."
-else
-    log "❌ Sync sırasında hata oluştu."
-fi
+# 3. Drive'daki dosyaların yol ve boyutlarını çıkart
+jq -r '.[] | "\(.Path)|\(.Size)"' "$DRIVE_LIST" | sort > "$DRIVE_PATHS"
+
+log "🚀 Yedekleme işlemi başlatıldı"
+# 4. Sadece Drive'da olup yerelde olmayan dosyaları bul
+comm -23 "$DRIVE_PATHS" "$LOCAL_LIST" > "$DELETE_LIST"
+
+# 5. Bu dosyaları Drive'dan sil
+while read -r filepath; do
+    log "❌ Siliniyor: $filepath"
+    rclone delete "$REMOTE:$REMOTE_DIR/$filepath"
+done < "$DELETE_LIST"
+
+# 6. Sadece localde olup drive'da olmayan veya boyutu farklı olan dosyaları bul
+comm -23 "$LOCAL_LIST" "$DRIVE_PATHS" > "$UPLOAD_LIST"
+
+# 7. Yüklenmesi gereken dosya sayısı
+COUNT=$(wc -l < "$UPLOAD_LIST")
+log "📦 Yüklenecek dosya sayısı: $COUNT"
+
+# 8. Sadece gerekli dosyaları yükle
+while IFS='|' read -r relative_path _; do
+    src="$LOCAL_DIR/$relative_path"
+    dst="$REMOTE:$REMOTE_DIR/$relative_path"
+    rclone copyto "$src" "$dst" --create-empty-src-dirs --log-level=NOTICE >> "$LOG_FILE"
+done < "$UPLOAD_LIST"
+
+log "✅ İşlem tamamlandı: $COUNT dosya yüklendi"
+
+rm -rf "$TMPDIR"
