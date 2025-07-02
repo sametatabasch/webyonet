@@ -36,7 +36,7 @@ comm -23 "$DRIVE_PATHS" "$LOCAL_LIST" > "$DELETE_LIST"
 # 5. Bu dosyaları Drive'dan sil
 while IFS='|' read -r filepath _; do
     log "❌ Siliniyor: $filepath"
-    rclone delete "$REMOTE:$REMOTE_DIR/$filepath"
+    rclone delete "$REMOTE:$REMOTE_DIR/$filepath" --progress
 done < "$DELETE_LIST"
 
 # 6. Sadece localde olup drive'da olmayan veya boyutu farklı olan dosyaları bul
@@ -50,7 +50,7 @@ log "📦 Yüklenecek dosya sayısı: $COUNT"
 while IFS='|' read -r relative_path _; do
     src="$LOCAL_DIR/$relative_path"
     dst="$REMOTE:$REMOTE_DIR/$relative_path"
-    rclone copyto "$src" "$dst" --log-level=NOTICE >> "$LOG_FILE"
+    rclone copyto "$src" "$dst" --log-level=NOTICE >> "$LOG_FILE" --progress
 done < "$UPLOAD_LIST"
 
 log "✅ İşlem tamamlandı: $COUNT dosya yüklendi"
