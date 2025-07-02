@@ -26,7 +26,7 @@ rclone lsjson -R "$REMOTE:$REMOTE_DIR" > "$DRIVE_LIST"
 
 # 2. Yerel dosyaları listele ve boyutlarıyla birlikte yaz
 log "📂 Yerel dosyalar listeleniyor..."
-find "$LOCAL_DIR" -type f -printf "%P|%s\n" | sort > "$LOCAL_LIST"
+find "$LOCAL_DIR" -type f ! -path "*/cache/*" -printf "%P|%s\n" | sort > "$LOCAL_LIST"
 
 # 3. Drive'daki dosyaların yol ve boyutlarını çıkart
 log "📄 Drive dosyaları işleniyor..."
@@ -38,10 +38,12 @@ comm -23 "$DRIVE_PATHS" "$LOCAL_LIST" > "$DELETE_LIST"
 
 # 5. Bu dosyaları Drive'dan sil
 log "🗑️ Drive'dan silinecek dosyalar hazırlanıyor..."
-while IFS='|' read -r filepath _; do
-    log "❌ Siliniyor: $filepath"
-    rclone delete "$REMOTE:$REMOTE_DIR/$filepath" --progress
-done < "$DELETE_LIST"
+cat "$DELETE_LIST" | xargs -P 16 -I{} bash -c '
+  filepath=$(echo "{}" | cut -d"|" -f1)
+  log() { echo "[$(date "+%Y-%m-%d %H:%M:%S")] ❌ Siliniyor: $filepath" | tee -a "$5"; }
+  log
+  rclone delete "$1:$2/$filepath" --progress
+' _ "$REMOTE" "$REMOTE_DIR" "$LOG_FILE"
 
 # 6. Sadece localde olup drive'da olmayan veya boyutu farklı olan dosyaları bul
 log "🔍 Yerelde olup Drive'da olmayan veya boyutu farklı olan dosyalar bulunuyor..."
@@ -56,7 +58,10 @@ xargs -P 32 -I{} bash -c '
   relative_path=$(echo "$1" | cut -d"|" -f1)
   src="$2/$relative_path"
   dst="$3:$4/$relative_path"
-  rclone copyto "$src" "$dst" --log-level=NOTICE --progress >> "$5"
+  # Eğer yolun içinde "cache" varsa atla
+  if [[ "$relative_path" != *cache* ]] && [ -f "$src" ]; then
+    rclone copyto "$src" "$dst" --log-level=NOTICE --progress >> "$5"
+  fi
 ' _ {} "$LOCAL_DIR" "$REMOTE" "$REMOTE_DIR" "$LOG_FILE"
 
 log "✅ İşlem tamamlandı: $COUNT dosya yüklendi"
