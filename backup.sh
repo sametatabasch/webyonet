@@ -7,6 +7,17 @@ LOG_DIR="$HOME/.backup"
 mkdir -p "$LOG_DIR"
 LOG_FILE="$LOG_DIR/home-archive-$(date +"%d-%m-%Y").log"
 
+# Kontroller
+if ! command -v rclone &>/dev/null; then
+    echo "❌ rclone yüklü değil. sudo apt install rclone"
+    exit 1
+fi
+
+if ! rclone listremotes | grep -q "^${REMOTE}:"; then
+    echo "❌ Remote '${REMOTE}' tanımlı değil."
+    exit 1
+fi
+
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
 }
@@ -15,7 +26,7 @@ cd "$LOCAL_DIR"
 
 for userdir in *; do
   if [ -d "$userdir" ]; then
-    archive_name="${userdir}-$(date +%Y%m%d).tar.gz"
+    archive_name="${userdir}.tar.gz"
     log "Arşivleniyor: $userdir → $archive_name"
     tar --exclude="$userdir/**/cache" --exclude="$userdir/**/cache/*" -czf "/tmp/$archive_name" "$userdir" ."$userdir" 2>>"$LOG_FILE"
     log "Yükleniyor: $archive_name"
