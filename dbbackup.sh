@@ -2,7 +2,7 @@
 
 REMOTE="gdrive"  # veya "yadisk"
 BACKUP_DIR="$HOME/.backup/db"
-LOG_FILE="$BACKUP_DIR/backup-db-$(date +"%d.%m.%Y").log" 
+LOG_FILE="$HOME/.backup/backup-db-$(date +"%d.%m.%Y").log" 
 REMOTE_DIR="DBBackups"
 
 # Kontroller
