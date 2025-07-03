@@ -30,7 +30,7 @@ for userdir in *; do
   if [ -d "$userdir" ]; then
     archive_name="${userdir}.tar.gz"
     log "Arşivleniyor: $userdir → $archive_name"
-    tar --exclude="$userdir/**/cache" --exclude="$userdir/**/cache/*" -czf "$BACKUP_DIR/$archive_name" "$userdir" ."$userdir" 2>>"$LOG_FILE"
+    tar --exclude="$userdir/**/cache" --exclude="$userdir/**/cache/*" -czf "$BACKUP_DIR/$archive_name" "$userdir" 2>>"$LOG_FILE"
     log "Sıkıştırıldı: $archive_name"
   fi
 done
