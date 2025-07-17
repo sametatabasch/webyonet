@@ -59,10 +59,10 @@ delete_site() {
 }
 
 backup_home() {
-    if [ -f $APPDIR/backup.sh ]; then
-        bash $APPDIR/backup.sh
+    if [ -f $APPDIR/backup.py ]; then
+        python3 $APPDIR/backup.py
     else
-        echo "❌ $APPDIR/backup.sh bulunamadı."
+        echo "❌ $APPDIR/backup.py bulunamadı."
     fi
 }
 

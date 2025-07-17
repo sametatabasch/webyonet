@@ -7,10 +7,10 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 if [[ "$1" == "-b" || "$1" == "--backup" ]]; then
-  if [ -f /usr/local/bin/webyonet-bin/backup.sh ]; then
-    bash /usr/local/bin/webyonet-bin/backup.sh
+  if [ -f /usr/local/bin/webyonet-bin/backup.py ]; then
+    python3 /usr/local/bin/webyonet-bin/backup.py
   else
-    echo "❌ /usr/local/bin/webyonet-bin/backup.sh bulunamadı."
+    echo "❌ /usr/local/bin/webyonet-bin/backup.py bulunamadı."
     exit 1
   fi
 elif [[ "$1" == "-db" || "$1" == "--database-backup" ]]; then
