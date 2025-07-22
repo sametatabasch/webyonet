@@ -3,7 +3,7 @@
 REMOTE="gdrive"  # veya "yadisk"
 BACKUP_DIR="$HOME/.backup/db"
 LOG_FILE="$HOME/.backup/backup-db-$(date +"%d.%m.%Y").log" 
-REMOTE_DIR="DBBackups"
+REMOTE_DIR="Backups/DBBackups"
 
 # Kontroller
 if ! command -v rclone &>/dev/null; then
