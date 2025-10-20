@@ -19,7 +19,7 @@ fi
 
 # Fonksiyon: SQL komutunu çalıştır (DB ismi ve SQL komutu alır)
 run_sql() {
-    mysql -u "backup" "$1" -e "$2"
+    mysql -u "root" "$1" -e "$2"
 }
 # DB_NAMES bir Bash array'i olarak tanımlanmalıdır: DB_NAMES=( "db1" "db2" )
 for DB_NAME in "${DB_NAMES[@]}"

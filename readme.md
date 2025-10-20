@@ -33,17 +33,14 @@ Sonra bu SQL komutlarını sırayla çalıştır:
 CREATE USER 'backup'@'localhost' IDENTIFIED BY 'GUVENLI_PAROLA';
 
 -- 2️⃣ Gerekli minimum izinleri ver:
-GRANT SELECT, SHOW DATABASES, LOCK TABLES, SHOW VIEW, DELETE, ALTER, CREATE, DROP, INDEX ON *.* TO 'backup'@'localhost';
+GRANT SELECT, SHOW DATABASES, LOCK TABLES, SHOW VIEW ON *.* TO 'backup'@'localhost';
+
 
 -- 3️⃣ İzinleri yenile:
 FLUSH PRIVILEGES;
 ```
 
 ✅ Bu kullanıcı sadece okuma (SELECT), görüntüleme (SHOW) ve tablo kilitleme (LOCK) yapabilir — yedekleme için yeterlidir.
-
-Not: Eğer `backup` kullanıcısının ayrıca veri silme (DELETE) yapması ve tabloları yeniden düzenleyip (OPTIMIZE TABLE) çalıştırabilmesi isteniyorsa, OPTIMIZE için gereken yetkiler olan `ALTER`, `CREATE`, `DROP` ve `INDEX` yetkilerini de ekledik. Bu sebeple yukarıdaki GRANT satırı DELETE ve OPTIMIZE ile ilişkili yetkileri içerir.
-
-Güvenlik uyarısı: DELETE izni tehlikeli olabilir — mümkünse izinleri spesifik veritabanlarıyla sınırlayın (ör. ON mydb.*).
 
 🔐 Parola saklama — `~/.my.cnf` kullanımı
 
