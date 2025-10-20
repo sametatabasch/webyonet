@@ -86,7 +86,7 @@ clean_db() {
 # Ana döngü
 while true; do
     show_menu
-    read -p "Seçiminiz [1-6]: " CHOICE
+    read -p "Seçiminiz [1-7]: " CHOICE
     case $CHOICE in
         1) create_site ;;
         2) change_domain ;;
