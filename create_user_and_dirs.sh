@@ -19,6 +19,39 @@ else
     SUBDOMAIN="$DOMAIN"
 fi
 
+# A kaydını al ve sunucu IP'si ile karşılaştır (sadece IPv4)
+if [ -n "$SERVER_IP" ]; then
+    # host veya dig ile A kayıtlarını al
+    if command -v dig &>/dev/null; then
+        DNS_IPS=$(dig +short A "$DOMAIN" | tr '\n' ' ')
+    else
+        DNS_IPS=$(host -t A "$DOMAIN" 2>/dev/null | awk '/has address/ {print $4}' | tr '\n' ' ')
+    fi
+
+    if [ -z "$DNS_IPS" ]; then
+        echo "❌ $DOMAIN için A kaydı bulunamadı; işlem iptal ediliyor."
+        exit 1
+    fi
+
+    # DNS_IPS içinde SERVER_IP var mı kontrol et
+    match=0
+    for ip in $DNS_IPS; do
+        if [ "$ip" = "$SERVER_IP" ]; then
+            match=1
+            break
+        fi
+    done
+
+    if [ $match -ne 1 ]; then
+        echo "❌ DNS'deki A kaydı ($DNS_IPS) sunucu IP'si ($SERVER_IP) ile eşleşmiyor. İşlem iptal edildi."
+        exit 1
+    else
+        echo "✅ DNS A kaydı sunucu IP'si ile eşleşiyor. Devam ediliyor."
+    fi
+else
+    echo "⚠️ SERVER_IP config'de tanımlı değil; DNS-IP kontrolü atlanıyor."
+fi
+
 # Kullanıcı zaten var mı kontrol et
 if id "$USERNAME" &>/dev/null; then
     echo "ℹ️ $USERNAME adlı kullanıcı zaten mevcut, oluşturma adımı atlanıyor."
