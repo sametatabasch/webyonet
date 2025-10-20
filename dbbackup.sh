@@ -52,5 +52,23 @@ else
     log "❌ Yedekler yüklenemedi. rclone hatası"
 fi
 
+# Yedekten sonra wp-db-clean.sh varsa çalıştır
+run_wp_db_clean() {
+    # varsa /usr/local/bin/webyonet-bin/ kullan (paket kurulumunda burada olur)
+    if [ -n "$APPDIR" ] && [ -x "$APPDIR/wp-db-clean.sh" ]; then
+        WP_CLEAN_SH="$APPDIR/wp-db-clean.sh"
+    elif [ -x "./wp-db-clean.sh" ]; then
+        WP_CLEAN_SH="./wp-db-clean.sh"
+    else
+        log "⚠️ wp-db-clean.sh bulunamadı; atlanıyor"
+        return 0
+    fi
+
+    log "🔁 Yedekten sonra wp-db-clean.sh çalıştırılıyor: $WP_CLEAN_SH"
+    bash "$WP_CLEAN_SH"
+}
+
+run_wp_db_clean
+
 log '✅ Tüm işlemler tamamlandı!'
 log '--------------------------'
