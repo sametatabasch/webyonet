@@ -24,9 +24,12 @@ log() {
 
 log '📦 MySQL veritabanı yedeği başlatılıyor'
 
-# save password for db user "backup" in "~/.mylogin.cnf":
-# mysql_config_editor set --login-path=local --host=localhost --user=backup --password
-# permisions for backup user: Select table data, Show databases, Lock tables, Show View
+# create ~/.my.cnf:
+
+# [client]
+# user=backup
+# password=GüçlüŞifreBuraya
+# host=localhost
 
 
 # Veritabanı listesi

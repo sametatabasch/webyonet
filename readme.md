@@ -18,6 +18,50 @@ sudo dpkg -i webyonet-x.x.x.deb
 sudo apt install -f 
 # ardından rclone yapılandırması için 
 rclone config
-# n tuşuna basarak yadisk yazın. 
-#storage seçiminde Yandex Disk (32)i seçin
-#yandex bağlantısı için gerekli işlemleri yapın
+```
+## Veri tabanı kurulumu
+MySQL “backup” kullanıcısını oluştur
+
+Öncelikle root olarak MySQL’e gir:
+```bash
+sudo mysql -u root -p
+```
+
+Sonra bu SQL komutlarını sırayla çalıştır:
+```bash
+-- 1️⃣ Yedekleme kullanıcısını oluştur (şifreyi kendin belirle)
+CREATE USER 'backup'@'localhost' IDENTIFIED BY 'GUVENLI_PAROLA';
+
+-- 2️⃣ Gerekli minimum izinleri ver:
+GRANT SELECT, SHOW DATABASES, LOCK TABLES, SHOW VIEW, DELETE, ALTER, CREATE, DROP, INDEX ON *.* TO 'backup'@'localhost';
+
+-- 3️⃣ İzinleri yenile:
+FLUSH PRIVILEGES;
+```
+
+✅ Bu kullanıcı sadece okuma (SELECT), görüntüleme (SHOW) ve tablo kilitleme (LOCK) yapabilir — yedekleme için yeterlidir.
+
+Not: Eğer `backup` kullanıcısının ayrıca veri silme (DELETE) yapması ve tabloları yeniden düzenleyip (OPTIMIZE TABLE) çalıştırabilmesi isteniyorsa, OPTIMIZE için gereken yetkiler olan `ALTER`, `CREATE`, `DROP` ve `INDEX` yetkilerini de ekledik. Bu sebeple yukarıdaki GRANT satırı DELETE ve OPTIMIZE ile ilişkili yetkileri içerir.
+
+Güvenlik uyarısı: DELETE izni tehlikeli olabilir — mümkünse izinleri spesifik veritabanlarıyla sınırlayın (ör. ON mydb.*).
+
+🔐 Parola saklama — `~/.my.cnf` kullanımı
+
+`backup` kullanıcısının parolasını betiklere düz metin yazmak yerine `~/.my.cnf` dosyasında saklayabilirsiniz. Aşağıdaki adımları izleyin (kullanıcı hesabınızda):
+
+1. Dosyayı oluşturun ve içeriği şu şekilde ayarlayın:
+
+```ini
+[client]
+user=backup
+password=GUVENLI_PAROLA
+host=localhost
+```
+
+2. Dosyanın izinlerini sıkılaştırın:
+
+```bash
+chmod 600 ~/.my.cnf
+```
+
+Not: `--defaults-file` opsiyonunu kullanmak isteğe bağlıdır; CLI araçları otomatik olarak `~/.my.cnf` dosyasını okuyabilir. Ancak betiklerinizde açıkça belirlemek güvenlik/taşınabilirlik açısından yardımcı olabilir.

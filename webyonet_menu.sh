@@ -28,9 +28,10 @@ show_menu() {
     echo "1) Yeni site oluştur"
     echo "2) Geçici subdomain’i gerçek domain ile değiştir"
     echo "3) Siteyi sil"
-    echo "4) Home dizin(leri)ni Yandex.Disk'e yedekle"
-    echo "5) Veritabanlarını Yandex.Disk'e yedekle"
-    echo "6) Çıkış"
+    echo "4) Home dizin(leri)ni yedekle"
+    echo "5) Veritabanlarını yedekle"
+    echo "6) Wordpress veritabanlarını temizle ve optimize et"
+    echo "7) Çıkış"
 }
 
 create_site() {
@@ -74,6 +75,14 @@ backup_db() {
     fi
 }
 
+clean_db() {
+    if [ -f $APPDIR/wp-db-clean.sh ]; then
+        bash $APPDIR/wp-db-clean.sh
+    else
+        echo "❌ $APPDIR/wp-db-clean.sh bulunamadı."
+    fi
+}
+
 # Ana döngü
 while true; do
     show_menu
@@ -84,7 +93,8 @@ while true; do
         3) delete_site ;;
         4) backup_home ;;
         5) backup_db ;;
-        6) echo "👋 Görüşmek üzere."; break ;;
+        6) clean_db ;;
+        7) echo "👋 Görüşmek üzere."; break ;;
         *) echo "Geçersiz seçim!" ;;
     esac
 done
