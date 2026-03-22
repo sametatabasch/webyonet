@@ -5,13 +5,19 @@ BACKUP_DIR="$HOME/.backup/db"
 LOG_FILE="$HOME/.backup/backup-db-$(date +"%d.%m.%Y").log" 
 REMOTE_DIR="Backups/DBBackups"
 
+RCLONE_CONFIG="/etc/webyonet/rclone.conf"
+MYSQL_CONFIG="/etc/webyonet/mysql-backup.cnf"
+
 # Kontroller
 if ! command -v rclone &>/dev/null; then
     echo "❌ rclone yüklü değil. sudo apt install rclone"
     exit 1
 fi
 
-if ! rclone listremotes | grep -q "^${REMOTE}:"; then
+RCLONE_CMD="rclone"
+[ -f "$RCLONE_CONFIG" ] && RCLONE_CMD="rclone --config $RCLONE_CONFIG"
+
+if ! $RCLONE_CMD listremotes | grep -q "^${REMOTE}:"; then
     echo "❌ Remote '${REMOTE}' tanımlı değil."
     exit 1
 fi
@@ -33,17 +39,22 @@ log '📦 MySQL veritabanı yedeği başlatılıyor'
 
 
 # Veritabanı listesi
-databases=$(mysql -u backup -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema|mysql|sys)")
+MYSQL_CMD="mysql"
+[ -f "$MYSQL_CONFIG" ] && MYSQL_CMD="mysql --defaults-extra-file=$MYSQL_CONFIG"
+DUMP_CMD="mysqldump"
+[ -f "$MYSQL_CONFIG" ] && DUMP_CMD="mysqldump --defaults-extra-file=$MYSQL_CONFIG"
+
+databases=$($MYSQL_CMD -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema|mysql|sys)")
 
 for db in $databases
 do
     log "🧩 '$db' dump oluşturuluyor"
     dump_name="$db.sql.gz"
-    mysqldump -u backup --force --opt --databases "$db" | gzip > "$BACKUP_DIR/$dump_name"
+    $DUMP_CMD --force --opt --databases "$db" | gzip > "$BACKUP_DIR/$dump_name"
 done
 
 # Buluta gönder (aynı isimli dosya güncellenir)
-rclone copy "$BACKUP_DIR/" "$REMOTE:$REMOTE_DIR/" --progress --log-level=INFO --log-file="$LOG_FILE"
+$RCLONE_CMD copy "$BACKUP_DIR/" "$REMOTE:$REMOTE_DIR/" --progress --log-level=INFO --log-file="$LOG_FILE"
 if [[ $? -eq 0 ]]; then
     log "✅ Veritabanı yedekleri buluta yüklendi"
     rm -f "$BACKUP_DIR/"*.sql.gz

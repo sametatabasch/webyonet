@@ -22,6 +22,72 @@ if ! command -v certbot &> /dev/null; then
     exit 1
 fi
 
+check_setup() {
+    local config_dir="/etc/webyonet"
+    local rclone_conf="$config_dir/rclone.conf"
+    local mysql_conf="$config_dir/mysql-backup.cnf"
+    
+    # Dizin kontrolü
+    if [ ! -d "$config_dir" ]; then
+        echo "📂 Yapılandırma dizini oluşturuluyor: $config_dir"
+        mkdir -p "$config_dir"
+        chmod 755 "$config_dir"
+    fi
+
+    # webyonet-config.sh değişken kontrolü ve doldurma
+    if [ -z "$WEB_SERVER" ] || [ -z "$SERVER_IP" ]; then
+        echo "📝 Yapılandırma değişkenleri eksik. Lütfen aşağıdaki bilgileri girin:"
+        
+        [ -z "$WEB_SERVER" ] && read -p "Web Sunucusu (nginx/apache) [$WEB_SERVER]: " INPUT_WEB && WEB_SERVER=${INPUT_WEB:-$WEB_SERVER}
+        [ -z "$SERVER_IP" ] && read -p "Sunucu IP Adresi [$SERVER_IP]: " INPUT_IP && SERVER_IP=${INPUT_IP:-$SERVER_IP}
+        [ -z "$CF_DOMAIN" ] && read -p "Cloudflare Domain (Opsiyonel) [$CF_DOMAIN]: " INPUT_CF && CF_DOMAIN=${INPUT_CF:-$CF_DOMAIN}
+        [ -z "$ClOUDFLARE_API_TOKEN" ] && read -p "Cloudflare API Token (Opsiyonel): " INPUT_CF_TOKEN && ClOUDFLARE_API_TOKEN=${INPUT_CF_TOKEN:-$ClOUDFLARE_API_TOKEN}
+        [ -z "$CLOUDFLARE_ZONE_ID" ] && read -p "Cloudflare Zone ID (Opsiyonel): " INPUT_CF_ZONE && CLOUDFLARE_ZONE_ID=${INPUT_CF_ZONE:-$CLOUDFLARE_ZONE_ID}
+        [ -z "$YANDEX_TOKEN" ] && read -p "Yandex Disk Token (Opsiyonel): " INPUT_YANDEX && YANDEX_TOKEN=${INPUT_YANDEX:-$YANDEX_TOKEN}
+
+        # Dosyaya kaydet
+        cat <<EOF > "$CONFIG"
+#!/bin/bash
+ClOUDFLARE_API_TOKEN="$ClOUDFLARE_API_TOKEN"
+CLOUDFLARE_ZONE_ID="$CLOUDFLARE_ZONE_ID"
+CF_DOMAIN="$CF_DOMAIN"
+SERVER_IP="$SERVER_IP"
+WEB_SERVER="$WEB_SERVER"
+YANDEX_TOKEN="$YANDEX_TOKEN"
+DB_NAMES=( "${DB_NAMES[@]}" )
+EOF
+        echo "✅ $CONFIG güncellendi."
+        chmod 644 "$CONFIG"
+    fi
+
+    # rclone.conf kontrolü
+    if [ ! -f "$rclone_conf" ]; then
+        echo "🚀 rclone yapılandırması bulunamadı. Kurulum başlatılıyor..."
+        rclone config --config "$rclone_conf"
+    fi
+
+    # mysql-backup.cnf kontrolü
+    if [ ! -f "$mysql_conf" ]; then
+        echo "🔑 MySQL yedekleme kullanıcısı bilgileri eksik."
+        read -p "MySQL yedekleme kullanıcı adı [backup]: " DB_USER
+        DB_USER=${DB_USER:-backup}
+        read -s -p "MySQL yedekleme şifresi: " DB_PASS
+        echo ""
+        
+        cat <<EOF > "$mysql_conf"
+[client]
+user=$DB_USER
+password=$DB_PASS
+host=localhost
+EOF
+        chmod 600 "$mysql_conf"
+        echo "✅ $mysql_conf oluşturuldu (izinler 600 olarak ayarlandı)."
+    fi
+}
+
+# Başlangıçta kurulumu kontrol et
+check_setup
+
 show_menu() {
     echo ""
     echo "🔧 Web Sitesi Yönetim Paneli"

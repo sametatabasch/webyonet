@@ -36,6 +36,7 @@ backup_list = [
 LOG_DIR = os.path.expanduser("~/.backup")
 os.makedirs(LOG_DIR, exist_ok=True)
 LOG_FILE = os.path.join(LOG_DIR, f"home-archive-{datetime.datetime.now():%d-%m-%Y}.log")
+RCLONE_CONFIG = "/etc/webyonet/rclone.conf"
 
 def log(msg):
     line = f"[{datetime.datetime.now():%Y-%m-%d %H:%M:%S}] {msg}"
@@ -43,11 +44,18 @@ def log(msg):
     with open(LOG_FILE, "a") as f:
         f.write(line + "\n")
 
+def get_rclone_args():
+    if os.path.exists(RCLONE_CONFIG):
+        return ["--config", RCLONE_CONFIG]
+    return []
+
 def check_rclone():
     if shutil.which("rclone") is None:
         print("❌ rclone yüklü değil. sudo apt install rclone")
         exit(1)
-    remotes = subprocess.check_output(["rclone", "listremotes"]).decode()
+    
+    cmd = ["rclone", "listremotes"] + get_rclone_args()
+    remotes = subprocess.check_output(cmd).decode()
     if not any(remote.strip(":") == REMOTE for remote in remotes.splitlines()):
         print(f"❌ Remote '{REMOTE}' tanımlı değil.")
         exit(1)
@@ -104,7 +112,8 @@ def upload_archives():
     for backup in backup_list:
         log(f"{backup['backup_dir']} içindeki arşivler Google Drive'a yükleniyor...")
         rclone_cmd = [
-            "rclone", "copy", os.path.expanduser(backup["backup_dir"]), f"{REMOTE}:{backup['remote_dir']}",
+            "rclone", "copy", os.path.expanduser(backup["backup_dir"]), f"{REMOTE}:{backup['remote_dir']}"
+        ] + get_rclone_args() + [
             "--drive-chunk-size=128M", "--multi-thread-streams=8",
             "--transfers=8", "--checkers=8", "--log-level=INFO",
             "--progress", f"--log-file={LOG_FILE}"
