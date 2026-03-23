@@ -1,0 +1,49 @@
+# Webyonet YAML Yapılandırma Dosyası Örneği
+# Bu dosyayı /etc/webyonet/webyonet.yaml olarak kopyalayın ve düzenleyin.
+
+# Web sunucu türü: "nginx" veya "apache"
+web_server: ""
+
+# Sunucu IP adresi (Cloudflare DNS kontrolü için)
+server_ip: ""
+
+# Cloudflare ayarları (opsiyonel)
+cloudflare_api_token: ""
+cloudflare_zone_id: ""
+cf_domain: ""  # Geçici subdomain için kullanılacak domain
+
+# WordPress veritabanı temizleme için veritabanı isimleri
+db_names: []
+# Örnek:
+# db_names:
+#   - wordpress_db1
+#   - wordpress_db2
+
+# rclone remote adı (rclone config ile tanımlanan remote)
+backup_remote: ""
+# Örnek: backup_remote: "gdrive"
+
+# Yedekleme hedefleri
+# Her hedef için local_dir, remote_dir, backup_dir zorunlu;
+# exclude ve only_subdirs opsiyoneldir.
+backup_list: []
+# Örnek:
+# backup_list:
+#   - local_dir: "/home"
+#     remote_dir: "Backups/HomeBackups"
+#     backup_dir: "~/.backup/HomeBackups"
+#     exclude:
+#       - "**/cache"
+#       - "**/cache/*"
+#     only_subdirs: true
+#   - local_dir: "/etc"
+#     remote_dir: "Backups/etcBackups"
+#     backup_dir: "~/.backup/etcBackups"
+#     only_subdirs: false
+
+# Veritabanı yedekleme ayarları
+db_backup_dir: ""
+db_remote_dir: ""
+# Örnek:
+# db_backup_dir: "~/.backup/db"
+# db_remote_dir: "Backups/DBBackups"

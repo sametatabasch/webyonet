@@ -1,0 +1,10 @@
+#!/bin/bash
+# /usr/local/bin/webyonet
+# Webyonet CLI wrapper - Python modülünü çalıştırır
+
+if [ "$EUID" -ne 0 ]; then
+    echo "❌ Bu programı çalıştırmak için root (sudo) yetkisine sahip olmalısınız."
+    exit 1
+fi
+
+exec python3 -m webyonet "$@"

@@ -2,4 +2,11 @@
 *.log
 *.bak
 *.swp
-
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+webyonet_build/
+.env
