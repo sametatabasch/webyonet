@@ -7,4 +7,5 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+export PYTHONPATH="/usr/local/lib:${PYTHONPATH:-}"
 exec python3 -m webyonet "$@"
