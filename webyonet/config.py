@@ -131,6 +131,71 @@ def check_setup() -> dict:
             if value:
                 config["cloudflare_zone_id"] = value
 
+        # DB names yapılandırması
+        if not config.get("db_names"):
+            print("\n📋 WordPress veritabanı temizleme için veritabanı isimleri")
+            print("   Her satıra bir veritabanı adı girin. Bitirmek için boş bırakıp Enter'a basın.")
+            db_names = []
+            while True:
+                name = input("  Veritabanı adı (boş = bitir): ").strip()
+                if not name:
+                    break
+                db_names.append(name)
+            if db_names:
+                config["db_names"] = db_names
+
+        # Backup remote yapılandırması
+        if not config.get("backup_remote"):
+            value = input("\n☁️  rclone remote adı (örn: gdrive): ").strip()
+            if value:
+                config["backup_remote"] = value
+
+        # Backup list yapılandırması
+        if not config.get("backup_list"):
+            print("\n📂 Yedekleme hedeflerini yapılandırın.")
+            print("   Her hedef için yerel dizin, uzak dizin ve yedek dizin bilgisi gereklidir.")
+            print("   Bitirmek için yerel dizin alanını boş bırakıp Enter'a basın.")
+            backup_list = []
+            while True:
+                print(f"\n  --- Hedef #{len(backup_list) + 1} ---")
+                local_dir = input("  Yerel dizin (örn: /home) (boş = bitir): ").strip()
+                if not local_dir:
+                    break
+                remote_dir = input("  Uzak dizin (örn: Backups/HomeBackups): ").strip()
+                if not remote_dir:
+                    break
+                backup_dir = input(f"  Yedek dizin (örn: ~/.backup/HomeBackups): ").strip()
+                if not backup_dir:
+                    break
+
+                exclude_input = input("  Hariç tutulacak desenler, virgülle ayırın (boş = yok): ").strip()
+                exclude = [e.strip() for e in exclude_input.split(",") if e.strip()] if exclude_input else []
+
+                only_subdirs_input = input("  Sadece alt dizinleri mi yedekle? (e/h) [h]: ").strip().lower()
+                only_subdirs = only_subdirs_input == "e"
+
+                backup_list.append({
+                    "local_dir": local_dir,
+                    "remote_dir": remote_dir,
+                    "backup_dir": backup_dir,
+                    "exclude": exclude,
+                    "only_subdirs": only_subdirs,
+                })
+                print(f"  ✅ Hedef eklendi: {local_dir}")
+
+            if backup_list:
+                config["backup_list"] = backup_list
+
+        # DB backup dizinleri
+        if not config.get("db_backup_dir"):
+            value = input("\n💾 Veritabanı yerel yedek dizini (örn: ~/.backup/db): ").strip()
+            if value:
+                config["db_backup_dir"] = value
+
+        if not config.get("db_remote_dir"):
+            value = input("💾 Veritabanı uzak dizin (örn: Backups/DBBackups): ").strip()
+            if value:
+                config["db_remote_dir"] = value
 
         save_config(config)
 
