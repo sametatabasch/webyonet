@@ -33,7 +33,7 @@
 bash make-deb.sh
 
 # Paketi kur
-sudo dpkg -i webyonet-2.0.1.deb
+sudo dpkg -i webyonet-2.0.2.deb
 
 # Eksik bağımlılıkları otomatik kur
 sudo apt install -f
