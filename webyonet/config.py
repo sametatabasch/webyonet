@@ -144,9 +144,10 @@ def check_setup() -> dict:
         print("🔑 MySQL yedekleme kullanıcısı bilgileri eksik.")
         db_user = input("MySQL yedekleme kullanıcı adı [backup]: ").strip() or "backup"
         db_pass = getpass.getpass("MySQL yedekleme şifresi: ")
+        db_host = input("MySQL sunucu adresi [localhost]: ").strip() or "localhost"
 
         with open(MYSQL_CONFIG, "w", encoding="utf-8") as f:
-            f.write(f"[client]\nuser={db_user}\npassword={db_pass}\nhost=localhost\n")
+            f.write(f"[client]\nuser={db_user}\npassword={db_pass}\nhost={db_host}\n")
 
         set_secure_permissions(MYSQL_CONFIG, 0o600)
         print(f"✅ {MYSQL_CONFIG} oluşturuldu (izinler 600 olarak ayarlandı).")
