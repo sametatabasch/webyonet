@@ -30,14 +30,7 @@ DEFAULT_CONFIG: dict = {
     "web_server": "",
     "db_names": [],
     "backup_remote": "",
-    "backup_list": [
-        {
-            "local_dir": "",
-            "remote_dir": "",
-            "backup_dir": "",
-            "exclude": ["**/cache", "**/cache/*"],
-            "only_subdirs": True, #or False
-        },],
+    "backup_list": [],
     "db_backup_dir": "",
     "db_remote_dir": "",
 }
