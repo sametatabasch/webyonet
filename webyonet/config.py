@@ -2,6 +2,7 @@
 
 import getpass
 import os
+import signal
 import sys
 from pathlib import Path
 
@@ -77,6 +78,41 @@ def save_config(config: dict) -> None:
 
 def check_setup() -> dict:
     """İlk kurulum kontrolü. Eksik yapılandırmaları interaktif olarak doldurur.
+
+    Returns:
+        Yapılandırma sözlüğü.
+    """
+    # Ctrl+C koruması: yanlışlıkla çıkışı önle
+    original_handler = signal.getsignal(signal.SIGINT)
+
+    def _sigint_handler(signum, frame):
+        """Ctrl+C basıldığında onay sorar."""
+        print("")
+        try:
+            answer = input("\n⚠️  Çıkmak istediğinize emin misiniz? (e/h) [h]: ").strip().lower()
+        except EOFError:
+            answer = "h"
+        if answer == "e":
+            # Yapılmış değişiklikleri kaydet
+            print("👋 Çıkılıyor...")
+            signal.signal(signal.SIGINT, original_handler)
+            sys.exit(0)
+        else:
+            print("▶️  Devam ediliyor...\n")
+
+    signal.signal(signal.SIGINT, _sigint_handler)
+
+    try:
+        config = _run_setup()
+    finally:
+        # Orijinal handler'ı geri yükle
+        signal.signal(signal.SIGINT, original_handler)
+
+    return config
+
+
+def _run_setup() -> dict:
+    """Asıl setup işlemlerini çalıştırır.
 
     Returns:
         Yapılandırma sözlüğü.
@@ -161,7 +197,8 @@ def check_setup() -> dict:
                 if not backup_dir:
                     break
 
-                exclude_input = input("  Hariç tutulacak desenler, virgülle ayırın (boş = yok): ").strip()
+                exclude_input = input("  Hariç tutulacak desenler, tırnaksız, virgülle ayırın\n"
+                                      "  (örn: **/cache, **/cache/*) (boş = yok): ").strip()
                 exclude = [e.strip() for e in exclude_input.split(",") if e.strip()] if exclude_input else []
 
                 only_subdirs_input = input("  Sadece alt dizinleri mi yedekle? (e/h) [h]: ").strip().lower()
