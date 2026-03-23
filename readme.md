@@ -18,7 +18,7 @@ Nginx ve Apache üzerinde web sitelerini yönetmek için geliştirilen Python ta
 
 ```bash
 ./make-deb.sh
-sudo dpkg -i webyonet-2.0.0.deb
+sudo dpkg -i webyonet-2.0.1.deb
 # Eksik bağımlılıklar için:
 sudo apt install -f
 ```
