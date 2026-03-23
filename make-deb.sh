@@ -31,6 +31,14 @@ Description: Python tabanlı web siteleri yönetmek için terminal aracı
  yedekleme işlemlerini gerçekleştirir.
 EOF
 
+# === ÖRNEK CONFIG'İ /etc/webyonet/ İÇİNE KOPYALA ===
+if [ -f "config/webyonet.yaml.example" ]; then
+    cp "config/webyonet.yaml.example" "$BUILD_DIR/etc/$APP_NAME/webyonet.yaml"
+else
+    echo "❌ config/webyonet.yaml.example bulunamadı."
+    exit 1
+fi
+
 # === CONFFILES DOSYASI ===
 echo "/etc/$APP_NAME/webyonet.yaml" > "$BUILD_DIR/DEBIAN/conffiles"
 
